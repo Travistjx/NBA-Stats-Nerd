@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+
+}
+
+.home-page{
+    position: relative;
+    display: flex;
+    justify-content: center;
+  
+}
+
+
+.lottie-animation {
+    position: absolute;
+    height: 80vh;
+    transform: translate(-100%, 10%);
+ 
+}
+
+.home-buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    gap: 1rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(0%, 250%);
+}
+
+
+@media only screen and (max-width: 600px) {
+   
+    .lottie-animation {
+        position: absolute;
+        width: 10vw;
+        transform: translate(-100%, 10%);
+    
+    }
+}
