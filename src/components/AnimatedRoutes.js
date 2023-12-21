@@ -4,6 +4,7 @@ import Home from "./Home";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import PlayerStats from "./PlayerStats";
+import SideBar from "./SideBar";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -27,6 +28,7 @@ const AnimatedRoutes = () => {
           path="/playerstats/*"
           element={<PlayerStats playerId={playerId} />}
         />
+        {/* <Route exact path="/playerstats/*" element={<SideBar />} /> */}
       </Routes>
     </AnimatePresence>
   );
