@@ -1,5 +1,5 @@
 .player-stats {
-   
+    height: 110vh;
     position: relative;
     display:flex;
     justify-content: center;
@@ -18,10 +18,10 @@
     transform: translate(0%, 240%);
 }
 
-.last-five-games {
+.last-ten-games {
     position: absolute;
     align-items: center;
-    transform: translate(0%, 380%);
+    transform: translate(0%, 100%);
 }
 
 table {
@@ -34,6 +34,7 @@ th {
     background-color: #f2f2f2;
     border: 1px solid #dddddd;
     padding: 0px 6px;
+    text-align: center;
 }
 
 td {
@@ -41,10 +42,10 @@ td {
     border: 1px solid #dddddd;
 }
 
-tbody tr td:nth-child(9) {
+.season-average tbody tr td:nth-child(9) {
     border-right: 2px solid blue;
 }
 
-thead tr th:nth-child(9) {
+.season-average thead tr th:nth-child(9) {
     border-right: 2px solid blue;
 }
