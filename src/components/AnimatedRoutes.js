@@ -1,14 +1,15 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import SearchPlayer from "./SearchPlayer";
 import Home from "./Home";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import PlayerStats from "./PlayerStats";
-import SideBar from "./SideBar";
+// import SideBar from "./SideBar";
+import LiveGameStats from "./LiveGameStats";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const playerId = location.state ? location.state.playerId : null;
 
   //Redirect back to search UI
@@ -28,7 +29,7 @@ const AnimatedRoutes = () => {
           path="/playerstats/*"
           element={<PlayerStats playerId={playerId} />}
         />
-        {/* <Route exact path="/playerstats/*" element={<SideBar />} /> */}
+        <Route exact path="/livegamestats" element={<LiveGameStats />} />
       </Routes>
     </AnimatePresence>
   );

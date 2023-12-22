@@ -1,3 +1,29 @@
 body {
   background-color: white;
 }
+
+
+
+::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(0, 0%, 44%);   
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(0, 0%, 18%);   
+  opacity: 50%;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(0, 0%, 8%);
+}
+
+@supports (scrollbar-color: red blue) {
+  * {
+      scrollbar-color: hsl(0, 0%, 44%) hsl(0, 0%, 18%);
+      scrollbar-width: thin;
+  }
+}

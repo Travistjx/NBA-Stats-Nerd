@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import teamData from "../assets/team-name-id.json";
+import "./PlayerStats.css";
+import loadingAnimation from "../assets/loading-animation.json";
+import Lottie from "lottie-react";
+import { motion } from "framer-motion";
 
 const PlayerStats = ({ playerId }) => {
   const controller = useMemo(() => new AbortController(), []);
   const [seasonAverage, setSeasonAverage] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
   const [gameStats, setGameStats] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   //Find Team Abbreviation from local json (e.g. Chicago for CHI)
   const findAbbreviationById = (id) => {
@@ -164,12 +168,17 @@ const PlayerStats = ({ playerId }) => {
       </tr>
     ));
 
-  return (
-    seasonAverage &&
-    playerProfile &&
-    gameStats && (
+  return isLoading ? (
+    <Lottie animationData={loadingAnimation} className="loading-animation" />
+  ) : (
+    seasonAverage && playerProfile && gameStats && (
       //Display player profile information
-      <div className="player-stats">
+      <motion.div
+        className="player-stats"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
         <div className="player-profile">
           <span>
             <b>Name: </b>
@@ -287,10 +296,10 @@ const PlayerStats = ({ playerId }) => {
                 <th>PF</th>
               </tr>
             </thead>
-            <tbody>{!isLoading && gameStatsRows}</tbody>
+            <tbody>{gameStatsRows}</tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
     )
   );
 };

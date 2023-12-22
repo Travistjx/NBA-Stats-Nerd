@@ -1,6 +1,6 @@
 import React from "react";
 import Lottie from "lottie-react";
-import animationData from "../assets/basketball-animation.json";
+import basketballAnimation from "../assets/basketball-animation.json";
 import { Link } from "react-router-dom";
 import "./Home.css";
 import { motion } from "framer-motion";
@@ -14,7 +14,10 @@ const Home = () => {
       exit={{ opacity: 0 }}
     >
       <div>
-        <Lottie animationData={animationData} className="lottie-animation" />
+        <Lottie
+          animationData={basketballAnimation}
+          className="basketball-animation"
+        />
       </div>
       <div className="home-buttons">
         <Link className="btn btn-primary" to="/playerstats">

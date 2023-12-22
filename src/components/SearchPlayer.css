@@ -93,28 +93,3 @@
     transition: opacity 500ms ease-in-out;
 }
   
-
-
-::-webkit-scrollbar {
-    width: 1em;
-}
-
-::-webkit-scrollbar-track {
-    background: hsl(120 15% 50% / 1);   
-}
-
-::-webkit-scrollbar-thumb {
-    background: hsl(120 15% 20% / 1);   
-    opacity: 50%;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: hsl(120 10% 15% / 1);
-}
-
-@supports (scrollbar-color: red blue) {
-    * {
-        scrollbar-color: hsl(120 15% 50% / 1) hsl(120 10% 20% / 1);
-        scrollbar-width: thin;
-    }
-}
