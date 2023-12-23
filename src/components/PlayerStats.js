@@ -175,129 +175,132 @@ const PlayerStats = ({ playerId }) => {
       //Display player profile information
       <motion.div
         className="player-stats"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        initial={{ opacity: 0, transition: { duration: 1 } }}
+        animate={{ opacity: 1, transition: { duration: 1 } }}
+        exit={{ opacity: 0, transition: { duration: 1 } }}
       >
-        <div className="player-profile">
-          <span>
-            <b>Name: </b>
-            {playerProfile.first_name !== null &&
-            playerProfile.first_name !== "" &&
-            playerProfile.last_name !== null &&
-            playerProfile.last_name !== ""
-              ? playerProfile.first_name + " " + playerProfile.last_name
-              : NaN}
-          </span>
-          <br />
-          <span>
-            <b>Position: </b>
-            {playerProfile?.position !== null && playerProfile?.position !== ""
-              ? playerProfile.position
-              : NaN}
-          </span>
-          <br />
-          <span>
-            <b>Height: </b>
-            {playerProfile?.height_feet !== null &&
-            playerProfile?.height_feet !== "" &&
-            playerProfile?.height_inches !== null &&
-            playerProfile?.height_inches !== ""
-              ? `${playerProfile.height_feet}'${playerProfile.height_inches}"`
-              : NaN}
-          </span>
-          <br />
-          <span>
-            <b>Weight: </b>
-            {playerProfile?.weight_pounds !== null &&
-            playerProfile?.weight_pounds !== ""
-              ? `${playerProfile?.weight_pounds}lb`
-              : NaN}
-          </span>
-          <br />
-          <br />
-        </div>
-        {/* Display the current season average (if applicable)*/}
-        <div className="stats-summary">
-          <b>Current Season (If Applicable)</b>
-          <table className="season-average">
-            <thead>
-              <tr>
-                <th>Season</th>
-                <th>GP</th>
-                <th>MINS</th>
-                <th>PTS</th>
-                <th>REB</th>
-                <th>AST</th>
-                <th>STL</th>
-                <th>BLK</th>
-                <th>TOV</th>
-                <th>FG%</th>
-                <th>3PT%</th>
-                <th>FT%</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td> {seasonAverage.data[0]?.season || 0} </td>
-                <td> {seasonAverage.data[0]?.games_played || 0} </td>
-                <td> {seasonAverage.data[0]?.min || 0} </td>
-                <td> {seasonAverage.data[0]?.pts || 0} </td>
-                <td> {seasonAverage.data[0]?.reb || 0} </td>
-                <td> {seasonAverage.data[0]?.ast || 0} </td>
-                <td> {seasonAverage.data[0]?.stl || 0} </td>
-                <td> {seasonAverage.data[0]?.blk || 0} </td>
-                <td> {seasonAverage.data[0]?.turnover || 0} </td>
-                <td>
-                  {seasonAverage.data[0]?.fg_pct
-                    ? (seasonAverage?.data[0]?.fg_pct * 100).toFixed(1)
-                    : 0}
-                </td>
-                <td>
-                  {seasonAverage.data[0]?.fg3_pct
-                    ? (seasonAverage.data[0]?.fg3_pct * 100).toFixed(1)
-                    : 0}
-                </td>
-                <td>
-                  {seasonAverage.data[0]?.ft_pct
-                    ? (seasonAverage.data[0]?.ft_pct * 100).toFixed(1)
-                    : 0}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        {/* Display the stats of last 10 games (if applicable)*/}
-        <div className="last-ten-games">
-          <b>Last 10 Games (If Applicable)</b>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Team</th>
-                <th>Opp</th>
-                <th>Result</th>
-                <th>Score</th>
-                <th>MINS</th>
-                <th>PTS</th>
-                <th>FG</th>
-                <th>FGA</th>
-                <th>3P</th>
-                <th>3PA</th>
-                <th>FT</th>
-                <th>FTA</th>
-                <th>ORB</th>
-                <th>DRB</th>
-                <th>TRB</th>
-                <th>AST</th>
-                <th>STL</th>
-                <th>BLK</th>
-                <th>TOV</th>
-                <th>PF</th>
-              </tr>
-            </thead>
-            <tbody>{gameStatsRows}</tbody>
-          </table>
+        <div className="player-stats-info">
+          <div className="player-profile">
+            <span>
+              <b>Name: </b>
+              {playerProfile.first_name !== null &&
+              playerProfile.first_name !== "" &&
+              playerProfile.last_name !== null &&
+              playerProfile.last_name !== ""
+                ? playerProfile.first_name + " " + playerProfile.last_name
+                : NaN}
+            </span>
+            <br />
+            <span>
+              <b>Position: </b>
+              {playerProfile?.position !== null &&
+              playerProfile?.position !== ""
+                ? playerProfile.position
+                : NaN}
+            </span>
+            <br />
+            <span>
+              <b>Height: </b>
+              {playerProfile?.height_feet !== null &&
+              playerProfile?.height_feet !== "" &&
+              playerProfile?.height_inches !== null &&
+              playerProfile?.height_inches !== ""
+                ? `${playerProfile.height_feet}'${playerProfile.height_inches}"`
+                : NaN}
+            </span>
+            <br />
+            <span>
+              <b>Weight: </b>
+              {playerProfile?.weight_pounds !== null &&
+              playerProfile?.weight_pounds !== ""
+                ? `${playerProfile?.weight_pounds}lb`
+                : NaN}
+            </span>
+            <br />
+            <br />
+          </div>
+          {/* Display the current season average (if applicable)*/}
+          <div className="stats-summary">
+            <b>Current Season (If Applicable)</b>
+            <table className="season-average">
+              <thead>
+                <tr>
+                  <th>Season</th>
+                  <th>GP</th>
+                  <th>MINS</th>
+                  <th>PTS</th>
+                  <th>REB</th>
+                  <th>AST</th>
+                  <th>STL</th>
+                  <th>BLK</th>
+                  <th>TOV</th>
+                  <th>FG%</th>
+                  <th>3PT%</th>
+                  <th>FT%</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td> {seasonAverage.data[0]?.season || 0} </td>
+                  <td> {seasonAverage.data[0]?.games_played || 0} </td>
+                  <td> {seasonAverage.data[0]?.min || 0} </td>
+                  <td> {seasonAverage.data[0]?.pts || 0} </td>
+                  <td> {seasonAverage.data[0]?.reb || 0} </td>
+                  <td> {seasonAverage.data[0]?.ast || 0} </td>
+                  <td> {seasonAverage.data[0]?.stl || 0} </td>
+                  <td> {seasonAverage.data[0]?.blk || 0} </td>
+                  <td> {seasonAverage.data[0]?.turnover || 0} </td>
+                  <td>
+                    {seasonAverage.data[0]?.fg_pct
+                      ? (seasonAverage?.data[0]?.fg_pct * 100).toFixed(1)
+                      : 0}
+                  </td>
+                  <td>
+                    {seasonAverage.data[0]?.fg3_pct
+                      ? (seasonAverage.data[0]?.fg3_pct * 100).toFixed(1)
+                      : 0}
+                  </td>
+                  <td>
+                    {seasonAverage.data[0]?.ft_pct
+                      ? (seasonAverage.data[0]?.ft_pct * 100).toFixed(1)
+                      : 0}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          {/* Display the stats of last 10 games (if applicable)*/}
+          <div className="last-ten-games">
+            <b>Last 10 Games (If Applicable)</b>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Team</th>
+                  <th>Opp</th>
+                  <th>Result</th>
+                  <th>Score</th>
+                  <th>MINS</th>
+                  <th>PTS</th>
+                  <th>FG</th>
+                  <th>FGA</th>
+                  <th>3P</th>
+                  <th>3PA</th>
+                  <th>FT</th>
+                  <th>FTA</th>
+                  <th>ORB</th>
+                  <th>DRB</th>
+                  <th>TRB</th>
+                  <th>AST</th>
+                  <th>STL</th>
+                  <th>BLK</th>
+                  <th>TOV</th>
+                  <th>PF</th>
+                </tr>
+              </thead>
+              <tbody>{gameStatsRows}</tbody>
+            </table>
+          </div>
         </div>
       </motion.div>
     )

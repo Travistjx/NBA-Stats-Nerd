@@ -54,3 +54,33 @@ body {
     background-color: #444  ;
     border-radius: 5px;
 }
+
+
+.drop-down {
+    display:flex;
+    flex-direction: column;
+    position: absolute;
+    top: 2.8rem;
+    right: 0rem;
+    padding: 5px;
+    width: 120px;
+    background-color: #333;
+}
+
+.drop-down li:hover {
+    cursor: pointer;
+}
+
+/* .drop-down:before {
+    content: " ";
+    position: absolute;
+    top: -0.5rem;
+    right: 1rem;
+    width: 15px;
+    height: 15px;
+    background-color: #333;
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
+    transform: rotate(45deg);
+} */
+

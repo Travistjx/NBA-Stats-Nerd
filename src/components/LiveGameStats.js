@@ -59,16 +59,16 @@ const LiveGameStats = () => {
                     ? "2nd Quarter"
                     : gameStat.period === 3
                     ? "3rd Quarter"
-                    : "4th Quarter / Finishing..."}
+                    : "4th Quarter / Finished"}
                 </div>
                 <div className="scoreboard-stats">
                   <div className="home-team-stats">
                     <span>{gameStat.home_team.full_name}</span>{" "}
-                    <span>{gameStat.home_team.score || 0}</span>
+                    <span>{gameStat.home_team_score || 0}</span>
                   </div>
                   <div className="visitor-team-stats">
                     <span>{gameStat.visitor_team.full_name}</span>
-                    <span>{gameStat.visitor_team.score || 0} </span>
+                    <span>{gameStat.visitor_team_score || 0} </span>
                   </div>
                 </div>
               </div>

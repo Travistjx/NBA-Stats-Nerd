@@ -9,16 +9,16 @@
 
 /* Transition for form/input */
 .player-search-div-enter {
-    transform: translateX(100%);
+    transform: translateX(-50%);
 }
 
 .player-search-div-enter-active {
-    transform: translateX(-150%);
+    transform: translate(-50%, -500%);
     transition: transform 500ms ease-in-out;
 }
 
 .player-search-div-enter-done {
-    transform: translateX(-150%);
+    transform: translate(-50%, -500%);
 }
 
 /* Customization for search results*/
@@ -26,8 +26,23 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-10%, -50%);
+    transform: translate(-50%, -10%);
 }
+
+.search-title {
+    text-align: center;
+}
+
+.player-stats-div {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin-top: -50px;
+}
+
+
 
 /*Transition for search results*/
 .player-enter {
@@ -52,8 +67,9 @@
     height: 350px;
     overflow:auto;
     overflow-x:hidden;
-    width: 650px;
+    width: 700px;
     border: 1px solid #272727;
+    margin-bottom: 150px;
 }
 
 .player-box {
@@ -92,4 +108,4 @@
     opacity: 0;
     transition: opacity 500ms ease-in-out;
 }
-  
+

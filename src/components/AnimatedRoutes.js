@@ -6,6 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import PlayerStats from "./PlayerStats";
 // import SideBar from "./SideBar";
 import LiveGameStats from "./LiveGameStats";
+import PastGameStats from "./PastGameStats";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -24,12 +25,13 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route index element={<Home />} />
         <Route exact path="/playerstats" element={<SearchPlayer />} />
-        <Route
+        {/* <Route
           exact
           path="/playerstats/*"
           element={<PlayerStats playerId={playerId} />}
-        />
+        /> */}
         <Route exact path="/livegamestats" element={<LiveGameStats />} />
+        <Route exact path="/pastgamestats" element={<PastGameStats />} />
       </Routes>
     </AnimatePresence>
   );

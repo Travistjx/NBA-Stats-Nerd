@@ -3,18 +3,22 @@ import "./SearchPlayer.css";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import PlayerStats from "./PlayerStats";
 
 const SearchPlayer = () => {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [buttonIsClicked, setbuttonIsClicked] = useState(false);
+  const [playerClicked, setPlayerClicked] = useState(false);
   const [playerData, setPlayerData] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsPending(true);
 
+    // replace space with +, so maintain valid url when used with url
     let formattedPlayerName = playerName.trim().replace(/\s+/g, "+");
 
     if (!formattedPlayerName) {
@@ -40,6 +44,7 @@ const SearchPlayer = () => {
         setPlayerData(data.data);
         setIsPending(false);
         setbuttonIsClicked(true);
+        setPlayerClicked(false);
       })
       .catch((error) => {
         console.error("Error fetching player data:", error);
@@ -52,7 +57,7 @@ const SearchPlayer = () => {
 
   useEffect(() => {}, [playerName]);
 
-  let groupSize = 2;
+  let groupSize = 4;
 
   let groups = playerData?.reduce(function (acc, item, index) {
     if (index % groupSize === 0) {
@@ -96,52 +101,62 @@ const SearchPlayer = () => {
           </form>
         </div>
       </CSSTransition>
-      <CSSTransition
-        in={playerData !== null}
-        timeout={500}
-        classNames="search-results"
-        unmountOnExit
-      >
-        {playerData && (
-          <div className="search-results">
-            <h2>Player Information</h2>
-            <br />
-            <div>
-              <div className="scrollable-container">
-                <TransitionGroup>
-                  {groups.map((group, rowIndex) => (
-                    <CSSTransition
-                      key={rowIndex}
-                      timeout={500}
-                      classNames="player"
-                    >
-                      <div className="row">
-                        {group.map((player) => (
-                          <div className="col-6" key={player.id}>
-                            <div
-                              className="player-box"
-                              onClick={() => {
-                                // Pass player.id to PlayerStats component using state
-                                navigate(`/playerstats/${player.id}`, {
-                                  state: { playerId: player.id },
-                                });
-                              }}
-                            >
-                              {`${player.first_name} ${player.last_name}`}
-                              <br />
-                              {`Team: ${player.team.full_name}`}
+
+      {!playerClicked && (
+        <CSSTransition
+          in={playerData !== null}
+          timeout={500}
+          classNames="search-results"
+          unmountOnExit
+        >
+          {playerData != null && (
+            <div className="search-results">
+              <h2 className="search-title">Search Results</h2>
+              <br />
+              <div>
+                <div className="scrollable-container">
+                  <TransitionGroup>
+                    {groups.map((group, rowIndex) => (
+                      <CSSTransition
+                        key={rowIndex}
+                        timeout={500}
+                        classNames="player"
+                      >
+                        <div className="row">
+                          {group.map((player) => (
+                            <div className="col-6" key={player.id}>
+                              <div
+                                className="player-box"
+                                onClick={() => {
+                                  // Pass player.id to PlayerStats component using state
+                                  // navigate(`/playerstats/${player.id}`, {
+                                  //   state: { playerId: player.id },
+                                  // });
+                                  setPlayerClicked(true);
+                                  setPlayerId(player.id);
+                                }}
+                              >
+                                {`${player.first_name} ${player.last_name}`}
+                                <br />
+                                {`Team: ${player.team.full_name}`}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CSSTransition>
-                  ))}
-                </TransitionGroup>
+                          ))}
+                        </div>
+                      </CSSTransition>
+                    ))}
+                  </TransitionGroup>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </CSSTransition>
+          )}
+        </CSSTransition>
+      )}
+      {playerClicked && (
+        <div className="player-stats-div">
+          <PlayerStats playerId={playerId} />
+        </div>
+      )}
     </motion.div>
   );
 };
