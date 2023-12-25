@@ -16,10 +16,10 @@ const LiveGameStats = () => {
 
       const fetchDate = async () => {
         try {
-          console.log(convertedDate);
           const liveGameAPI = `https://www.balldontlie.io/api/v1/games?start_date=${convertedDate}&end_date=${convertedDate}`;
           const response = await axios.get(liveGameAPI);
 
+          console.log(response.data);
           setLiveGameData(response.data);
           setIsLoading(false);
         } catch (error) {
