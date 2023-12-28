@@ -1,37 +1,39 @@
 // import { useEffect } from "react";
 import SearchPlayer from "./SearchPlayer";
 import Home from "./Home";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import PlayerStats from "./PlayerStats";
-// import SideBar from "./SideBar";
 import LiveGameStats from "./LiveGameStats";
 import PastGameStats from "./PastGameStats";
+import LineChart from "./LineChart";
 
-const AnimatedRoutes = () => {
+const AnimatedRoutes = ({ openLinks }) => {
   const location = useLocation();
-  // const navigate = useNavigate();
-  const playerId = location.state ? location.state.playerId : null;
-
-  //Redirect back to search UI
-  // useEffect(() => {
-  //   if (playerId === null) {
-  //     navigate("/playerstats");
-  //   }
-  // }, [playerId, navigate]);
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route index element={<Home />} />
-        <Route exact path="/playerstats" element={<SearchPlayer />} />
-        {/* <Route
+        <Route index element={<Home openLinks={openLinks} />} />
+        <Route
           exact
-          path="/playerstats/*"
-          element={<PlayerStats playerId={playerId} />}
-        /> */}
-        <Route exact path="/livegamestats" element={<LiveGameStats />} />
-        <Route exact path="/pastgamestats" element={<PastGameStats />} />
+          path="/playerstats"
+          element={<SearchPlayer openLinks={openLinks} />}
+        />
+        <Route
+          exact
+          path="/livegamestats"
+          element={<LiveGameStats openLinks={openLinks} />}
+        />
+        <Route
+          exact
+          path="/pastgamestats"
+          element={<PastGameStats openLinks={openLinks} />}
+        />
+        <Route
+          exact
+          path="/test"
+          element={<LineChart openLinks={openLinks} />}
+        />
       </Routes>
     </AnimatePresence>
   );

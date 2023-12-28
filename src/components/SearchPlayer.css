@@ -1,10 +1,20 @@
+.player-stats-page{
+    transform: translateY(0);
+}
+
+.player-stats-page.adjusted{
+    transform: translateY(50px);
+}
+
+
 /* Customization for form/input */
 .player-search-div {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, 700%);
     transition: transform 5s;
+    margin-bottom: 200px;   
 }
 
 /* Transition for form/input */
@@ -13,12 +23,13 @@
 }
 
 .player-search-div-enter-active {
-    transform: translate(-50%, -500%);
+    transform: translate(-50%, 200%);
     transition: transform 500ms ease-in-out;
 }
 
 .player-search-div-enter-done {
-    transform: translate(-50%, -500%);
+    transform: translate(-50%, 200%);
+    position: absolute;
 }
 
 /* Customization for search results*/
@@ -26,7 +37,8 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -10%);
+    transform: translate(-50%, 30%);
+    max-width: 100%;
 }
 
 .search-title {
@@ -109,3 +121,93 @@
     transition: opacity 500ms ease-in-out;
 }
 
+@media only screen and (max-width: 1200px) {
+    .player-search-div {
+        transform: translate(-50%, 500%);
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+ 
+    .player-search-form {
+        transform: translateY(100%);
+    }
+
+    .search-results {
+        transform: translate(-50%, 40%);      
+    }
+    
+    .player-search-div {
+        transform: translate(-50%, 350%);
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .player-search-form {     
+        transform: translateY(100%);
+    }
+
+    .scrollable-container {
+        height: 250px;
+        overflow:auto;
+        overflow-x: hidden;
+        width: 500px;
+    }
+
+    .player-search-div {
+        transform: translate(-50%, 250%);
+    }
+}
+
+
+
+@media only screen and (max-width: 600px) {
+    .player-search-form {     
+        transform: translateY(100%);
+    }
+
+       
+    .scrollable-container {
+        height: 250px;
+        overflow:auto;
+        width: 400px;
+    }
+
+    .player-search-div {
+        transform: translate(-50%, 50%);
+        width: 250px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .player-search-form {     
+        transform: translateY(100%);
+    }
+
+    .scrollable-container {
+        height: 250px;
+        overflow:auto;
+        width: 300px;
+    }
+
+    .player-search-div {
+        transform: translate(-50%, 0%);
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .player-search-form {     
+        transform: translateY(100%);
+    }
+
+    .scrollable-container {
+        height: 250px;
+        overflow:auto;
+        width: 200px;
+    }
+
+    .player-search-div {
+        transform: translate(-50%, -30%);
+        width: 200px;
+    }
+}

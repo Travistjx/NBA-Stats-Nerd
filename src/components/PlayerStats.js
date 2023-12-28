@@ -112,6 +112,28 @@ const PlayerStats = ({ playerId }) => {
     };
   }, [playerId, controller]);
 
+  // useEffect(() => {
+  //   if (gameStats && gameStats.data && gameStats.data.data) {
+  //     setPlayerData({
+  //       labels: gameStats?.data?.data
+  //         .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
+  //         .slice(-10) //from the back
+  //         .reverse() //in descending order
+  //         .map((data) => data.pts),
+  //       datasets: [
+  //         {
+  //           label: "Last 10 Games",
+  //           data: gameStats?.data?.data
+  //             .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
+  //             .slice(-10) //from the back
+  //             .reverse() //in descending order
+  //             .map((data) => data.team.abbreviation),
+  //         },
+  //       ],
+  //     });
+  //   }
+  // }, [gameStats]);
+
   // To get the last 10 games that selected player partook in
   const gameStatsRows = gameStats?.data?.data
     .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
@@ -269,6 +291,7 @@ const PlayerStats = ({ playerId }) => {
               </tbody>
             </table>
           </div>
+
           {/* Display the stats of last 10 games (if applicable)*/}
           <div className="last-ten-games">
             <b>Last 10 Games (If Applicable)</b>

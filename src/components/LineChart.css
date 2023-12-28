@@ -1,0 +1,52 @@
+.compare-players-page {
+    max-width: 1000px; 
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.compare-players-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.compare-players-box {
+    width: 500px;
+    border: 1px solid black;
+    height: 500px;
+   display: flex;
+   flex-direction: column;
+}
+
+/* .compare-players-box:hover {
+    background-color: whitesmoke;
+    cursor: pointer;
+} */
+
+.first-player-form {
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.first-player-search-results{
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: auto;
+}
+
+.search-result-box {
+    border: 1px solid grey;
+    padding: 10px;
+}
+
+.search-result-box:hover {
+    background-color: whitesmoke;
+    cursor: pointer;
+}
+
+.first-player-stats-summary{
+    text-align: center;
+    margin-top: 50px;
+}

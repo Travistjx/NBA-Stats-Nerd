@@ -14,6 +14,7 @@ body {
     align-items: stretch;
     padding: 0 1rem;
     gap: 2rem;
+    
 }
 
 .site-title {
@@ -26,7 +27,10 @@ body {
     list-style: none;
     display:flex;
     gap:1rem;
+    
 }
+
+
 
 .games-dropdown-button {
     background-color: #333;
@@ -61,12 +65,82 @@ body {
     flex-direction: column;
     position: absolute;
     top: 2.8rem;
-    right: 0rem;
+    right: 0.1rem;
     padding: 5px;
-    width: 120px;
+    width: 130px;
     background-color: #333;
 }
 
-.drop-down li:hover {
+.drop-down a:hover {
     cursor: pointer;
+    background-color: #444;
+    border-radius: 5px;
 }
+
+.faCaretDown {
+    margin-left: 5px;
+}
+
+a.navbar-icon {
+    display: none;
+}
+
+.nav-links {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display:flex;
+    gap:1rem;
+}
+
+
+@media screen and (max-width: 500px){
+    .nav {
+         display: block;
+    }
+
+    .nav ul{
+        display: block;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap:1rem;
+    }
+  
+   .nav-links{
+        display: none;
+    }
+
+    .nav-links.responsive{
+        display: block;
+    }
+
+    
+    .drop-down {
+        display:flex;
+        flex-direction: column;
+        position: absolute;
+        top: 7.8rem;
+        left: 0rem;
+        padding: 5px;
+        padding-left: 30px;
+        width: 100%;
+        background-color: #333;
+        z-index: 999;
+ 
+    }
+
+    
+    a.navbar-icon {
+        position: absolute;
+        display: block;
+        right: 0;
+        top: 0;
+        margin-top: 0.2rem;
+    }
+
+    a.navbar-icon:hover {
+       color: white;
+    }
+}
+

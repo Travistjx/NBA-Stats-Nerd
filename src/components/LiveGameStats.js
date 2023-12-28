@@ -6,7 +6,7 @@ import loadingAnimation from "../assets/loading-animation.json";
 import Lottie from "lottie-react";
 import { motion } from "framer-motion";
 
-const LiveGameStats = () => {
+const LiveGameStats = ({ openLinks }) => {
   const [liveGameData, setLiveGameData] = useState(null);
   const [isloading, setIsLoading] = useState(true);
 
@@ -28,7 +28,7 @@ const LiveGameStats = () => {
       };
 
       fetchDate();
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -38,7 +38,7 @@ const LiveGameStats = () => {
   ) : (
     liveGameData && (
       <motion.div
-        className="live-game-stats-container"
+        className={`live-game-stats-container${openLinks ? " adjusted" : ""}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

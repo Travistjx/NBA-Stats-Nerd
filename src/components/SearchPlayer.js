@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import "./SearchPlayer.css";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import PlayerStats from "./PlayerStats";
 
-const SearchPlayer = () => {
-  const navigate = useNavigate();
+const SearchPlayer = ({ openLinks }) => {
   const [playerName, setPlayerName] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [buttonIsClicked, setbuttonIsClicked] = useState(false);
@@ -36,7 +34,7 @@ const SearchPlayer = () => {
     }, 5000);
 
     return fetch(
-      `https://www.balldontlie.io/api/v1/players?search=${playerName}`,
+      `https://www.balldontlie.io/api/v1/players?search=${formattedPlayerName}`,
       { signal }
     )
       .then((res) => res.json())
@@ -57,19 +55,20 @@ const SearchPlayer = () => {
 
   useEffect(() => {}, [playerName]);
 
-  let groupSize = 4;
+  // let groupSize = 2;
 
-  let groups = playerData?.reduce(function (acc, item, index) {
-    if (index % groupSize === 0) {
-      acc.push([item]);
-    } else {
-      acc[acc.length - 1].push(item);
-    }
-    return acc;
-  }, []);
+  // let groups = playerData?.reduce(function (acc, item, index) {
+  //   if (index % groupSize === 0) {
+  //     acc.push([item]);
+  //   } else {
+  //     acc[acc.length - 1].push(item);
+  //   }
+  //   return acc;
+  // }, []);
 
   return (
     <motion.div
+      className={`player-stats-page${openLinks ? " adjusted" : ""}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -80,7 +79,7 @@ const SearchPlayer = () => {
         classNames="player-search-div"
       >
         <div className="player-search-div">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="player-search-form">
             <div className="row">
               <div className="col-8">
                 <input
@@ -116,14 +115,14 @@ const SearchPlayer = () => {
               <div>
                 <div className="scrollable-container">
                   <TransitionGroup>
-                    {groups.map((group, rowIndex) => (
+                    {playerData.map((group, rowIndex) => (
                       <CSSTransition
                         key={rowIndex}
                         timeout={500}
                         classNames="player"
                       >
                         <div className="row">
-                          {group.map((player) => (
+                          {playerData.map((player) => (
                             <div className="col-6" key={player.id}>
                               <div
                                 className="player-box"

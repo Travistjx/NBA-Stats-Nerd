@@ -4,7 +4,7 @@ import { CSSTransition } from "react-transition-group";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-const PastGameStats = () => {
+const PastGameStats = ({ openLinks }) => {
   const [gamesDate, setGamesDate] = useState(null);
   const [convertedDate, setConvertedDate] = useState(null);
   const [isPending, setIsPending] = useState(false);
@@ -16,8 +16,6 @@ const PastGameStats = () => {
     setIsPending(true);
     const convertedDate = new Date(gamesDate).toISOString().split("T")[0];
     setConvertedDate(convertedDate);
-
-    console.log(convertedDate);
 
     const fetchData = async () => {
       try {
@@ -39,6 +37,7 @@ const PastGameStats = () => {
 
   return (
     <motion.div
+      className={`past-game-stats-container${openLinks ? " adjusted" : ""}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -46,10 +45,10 @@ const PastGameStats = () => {
       <CSSTransition
         in={buttonIsClicked}
         timeout={500}
-        classNames="player-search-div"
+        classNames="date-search-div"
       >
-        <div className="player-search-div">
-          <form onSubmit={handleSubmit}>
+        <div className="date-search-div">
+          <form onSubmit={handleSubmit} className="games-search-form">
             <div className="row">
               <div className="col-8">
                 <input

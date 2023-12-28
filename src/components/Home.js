@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 import "./Home.css";
 import { motion } from "framer-motion";
 
-const Home = () => {
+const Home = ({ openLinks }) => {
   return (
     <motion.div
-      className="home-page"
+      className={`home-page${openLinks ? " adjusted" : ""}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
