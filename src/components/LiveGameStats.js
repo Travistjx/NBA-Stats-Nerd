@@ -27,7 +27,7 @@ const LiveGameStats = ({ openLinks }) => {
         }
       };
 
-      fetchDate();
+      //fetchDate();
     }, 10000);
 
     return () => clearInterval(intervalId);

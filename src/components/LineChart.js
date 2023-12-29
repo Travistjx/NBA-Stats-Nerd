@@ -4,16 +4,29 @@ import { UserData } from "./UserData.js";
 import { Chart as ChartJs } from "chart.js/auto";
 import axios from "axios";
 import "./LineChart.css";
+import playerPhoto from "../assets/player-photos.json";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/fontawesome-free-solid";
 
 const LineChart = ({ openLinks }) => {
-  const [allFirstPlayersFound, setallFirstPlayersFound] = useState(null);
-  const [allSecondPlayersFound, setallSecondPlayersFound] = useState(null);
+  const [allFirstPlayersFound, setAllFirstPlayersFound] = useState(null);
+  const [allSecondPlayersFound, setAllSecondPlayersFound] = useState(null);
   const [firstPlayerName, setFirstPlayerName] = useState(null);
   const [secondPlayerName, setSecondPlayerName] = useState(null);
-  const [isPending, setIsPending] = useState(false);
-  const [seasonAverage, setSeasonAverage] = useState(null);
-  const [gameStats, setGameStats] = useState(null);
-  const [playerIsChosen, setPlayerIsChosen] = useState(false);
+  const [firstFormIsPending, setFirstFormIsPending] = useState(false);
+  const [secondFormIsPending, setSecondFormIsPending] = useState(false);
+  const [firstPlayerSeasonAverage, setFirstPlayerSeasonAverage] =
+    useState(null);
+  const [secondPlayerSeasonAverage, setSecondPlayerSeasonAverage] =
+    useState(null);
+  const [firstPlayerGameStats, setFirstPlayerGameStats] = useState(null);
+  const [secondPlayerGameStats, setSecondPlayerGameStats] = useState(null);
+  const [firstPlayerIsChosen, setFirstPlayerIsChosen] = useState(false);
+  const [secondPlayerIsChosen, setSecondPlayerIsChosen] = useState(false);
+  const [firstPlayerPhoto, setFirstPlayerPhoto] = useState(null);
+  const [secondPlayerPhoto, setSecondPlayerPhoto] = useState(null);
+  const [firstSearchItem, setFirstSearchItem] = useState(null);
+  const [secondSearchItem, setSecondSearchItem] = useState(null);
 
   const [userData, setUserData] = useState({
     labels: UserData.map((data) => data.year),
@@ -25,7 +38,52 @@ const LineChart = ({ openLinks }) => {
     ],
   });
 
-  const getPlayerStats = (chosenPlayer) => {
+  const compareAndColor = (value1, value2) => {
+    if (value1 < value2) {
+      return "red";
+    } else if (value1 > value2) {
+      return "green";
+    } else {
+      return "grey";
+    }
+  };
+
+  const renderStat = (label, mainValue, otherValue, color) => (
+    <span style={{ color }}>
+      {label}: {mainValue}{" "}
+      {color === "green"
+        ? `(${label === "TOV" ? "-" : "+"}${(mainValue - otherValue).toFixed(
+            2
+          )})`
+        : color === "red"
+        ? `(${label === "TOV" ? "+" : "-"}${Math.abs(
+            otherValue - mainValue
+          ).toFixed(2)})`
+        : ""}
+    </span>
+  );
+
+  //Function to get corresponding image link based on player name (using imported json file)
+  const getPlayerPhoto = (playerName) => {
+    console.log(playerName);
+    let formattedNameArray = playerName.split(" ");
+    const lastName = formattedNameArray[1].slice(0, 5);
+    const charactersNeededFromFirstName = 7 - lastName.length;
+    const firstName = formattedNameArray[0].slice(
+      0,
+      charactersNeededFromFirstName
+    );
+    const formattedName = lastName.toLowerCase() + firstName.toLowerCase();
+
+    const playerPhotoFound = Object.keys(playerPhoto).find((key) =>
+      key.includes(formattedName)
+    );
+    console.log(playerPhotoFound);
+    return playerPhoto ? playerPhoto[playerPhotoFound] : "N/A";
+  };
+
+  // Set chosen first player's season average, game stats, and photo
+  const getFirstPlayerStats = (chosenPlayer) => {
     const fetchPlayerStats = async () => {
       const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
       const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
@@ -35,26 +93,69 @@ const LineChart = ({ openLinks }) => {
         axios.get(gameStatsAPI),
       ]);
 
-      setSeasonAverage(seasonAverageData.data);
-      setGameStats(gameStatsData.data);
+      setFirstPlayerSeasonAverage(seasonAverageData.data);
+      setFirstPlayerGameStats(gameStatsData.data);
+      console.log(chosenPlayer.firstName);
+      setFirstPlayerPhoto(
+        getPlayerPhoto(`${chosenPlayer.first_name} ${chosenPlayer.last_name}`)
+      );
     };
 
     fetchPlayerStats();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsPending(true);
-    setPlayerIsChosen(false);
+  // Set chosen second player's season average, game stats, and photo
+  const getSecondPlayerStats = (chosenPlayer) => {
+    const fetchPlayerStats = async () => {
+      const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
+      const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
 
-    let formattedPlayerName = firstPlayerName.trim().replace(/\s+/g, "+");
+      const [seasonAverageData, gameStatsData] = await Promise.all([
+        axios.get(seasonAverageAPI),
+        axios.get(gameStatsAPI),
+      ]);
+
+      setSecondPlayerSeasonAverage(seasonAverageData.data);
+      setSecondPlayerGameStats(gameStatsData.data);
+      setSecondPlayerPhoto(
+        getPlayerPhoto(`${chosenPlayer.first_name} ${chosenPlayer.last_name}`)
+      );
+    };
+
+    fetchPlayerStats();
+  };
+
+  const handleSubmitFirstPlayer = (e) => {
+    e.preventDefault();
+    setFirstFormIsPending(true);
+    setFirstPlayerIsChosen(false);
+
+    let formattedPlayerName = firstSearchItem.trim().replace(/\s+/g, "+");
 
     const fetchPlayerProfile = async () => {
       const playerProfileAPI = `https://www.balldontlie.io/api/v1/players?search=${formattedPlayerName}`;
       const response = await axios.get(playerProfileAPI);
       console.log(response.data.data);
-      setallFirstPlayersFound(response.data.data);
-      setIsPending(false);
+      setAllFirstPlayersFound(response.data.data);
+      setFirstFormIsPending(false);
+    };
+
+    fetchPlayerProfile();
+  };
+
+  const handleSubmitSecondPlayer = (e) => {
+    e.preventDefault();
+    setSecondFormIsPending(true);
+    setSecondPlayerIsChosen(false);
+
+    let formattedPlayerName = secondSearchItem.trim().replace(/\s+/g, "+");
+
+    const fetchPlayerProfile = async () => {
+      const playerProfileAPI = `https://www.balldontlie.io/api/v1/players?search=${formattedPlayerName}`;
+      const response = await axios.get(playerProfileAPI);
+      console.log(response.data.data);
+      setAllSecondPlayersFound(response.data.data);
+      setSecondFormIsPending(false);
     };
 
     fetchPlayerProfile();
@@ -82,76 +183,152 @@ const LineChart = ({ openLinks }) => {
   //<Line data={userData} />
   return (
     <div className="compare-players-page">
+      <div class="compare-players-header">Player Comparison</div>
       <div className="compare-players-boxes">
+        {/* First Player */}
         <div className="compare-players-box">
-          <form onSubmit={handleSubmit} className="first-player-form">
-            <input
-              type="text"
-              placeholder="Player's Name"
-              onChange={(e) => setFirstPlayerName(e.target.value)}
-              required
-            />
-            <button className="btn btn-secondary">
-              {!isPending ? "Search" : "Searching..."}
-            </button>
+          {/* First Player (Search Form) */}
+          <form
+            onSubmit={handleSubmitFirstPlayer}
+            className="first-player-form"
+          >
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faSearch} />
+              <input
+                className="input"
+                type="text"
+                placeholder="Player's Name"
+                onChange={(e) => setFirstSearchItem(e.target.value)}
+                required
+              />
+            </div>
           </form>
-          {seasonAverage && playerIsChosen && (
+          {/* First Player (Season Average) */}
+          {firstPlayerSeasonAverage && firstPlayerIsChosen && (
             <div className="first-player-stats-summary">
-              <b>Current Season Averages ({seasonAverage.data[0]?.season})</b>
+              <img src={firstPlayerPhoto}></img>
+              <br />
+              <br />
+              <b>
+                Season Averages ({firstPlayerSeasonAverage.data[0]?.season})
+              </b>
               <br />
               <span>Name: {firstPlayerName}</span>
               <br />
               <span>
-                Games Played: {seasonAverage.data[0]?.games_played || 0}
+                Games Played:{" "}
+                {firstPlayerSeasonAverage.data[0]?.games_played || 0}
               </span>
               <br />
-              <span>Mins: {seasonAverage.data[0]?.min || 0}</span>
+              <span>Mins: {firstPlayerSeasonAverage.data[0]?.min || 0}</span>
               <br />
-              <span>PPG: {seasonAverage.data[0]?.pts || 0}</span>
+              {renderStat(
+                "PTS",
+                firstPlayerSeasonAverage?.data[0]?.pts || 0,
+                secondPlayerSeasonAverage?.data[0]?.pts || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.pts || 0,
+                  secondPlayerSeasonAverage?.data[0]?.pts || 0
+                )
+              )}
               <br />
-              <span>REB: {seasonAverage.data[0]?.reb || 0}</span>
+              {renderStat(
+                "REB",
+                firstPlayerSeasonAverage?.data[0]?.reb || 0,
+                secondPlayerSeasonAverage?.data[0]?.reb || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.reb || 0,
+                  secondPlayerSeasonAverage?.data[0]?.reb || 0
+                )
+              )}
               <br />
-              <span>AST: {seasonAverage.data[0]?.ast || 0}</span>
+              {renderStat(
+                "AST",
+                firstPlayerSeasonAverage?.data[0]?.ast || 0,
+                secondPlayerSeasonAverage?.data[0]?.ast || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.ast || 0,
+                  secondPlayerSeasonAverage?.data[0]?.ast || 0
+                )
+              )}
               <br />
-              <span>BLK {seasonAverage.data[0]?.blk || 0}</span>
+              {renderStat(
+                "BLK",
+                firstPlayerSeasonAverage?.data[0]?.blk || 0,
+                secondPlayerSeasonAverage?.data[0]?.blk || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.blk || 0,
+                  secondPlayerSeasonAverage?.data[0]?.blk || 0
+                )
+              )}
               <br />
-              <span>STL {seasonAverage.data[0]?.stl || 0}</span>
+              {renderStat(
+                "STL",
+                firstPlayerSeasonAverage?.data[0]?.stl || 0,
+                secondPlayerSeasonAverage?.data[0]?.stl || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.stl || 0,
+                  secondPlayerSeasonAverage?.data[0]?.stl || 0
+                )
+              )}
               <br />
-              <span>TOV {seasonAverage.data[0]?.turnover || 0}</span>
+              {renderStat(
+                "TOV",
+                firstPlayerSeasonAverage?.data[0]?.turnover || 0,
+                secondPlayerSeasonAverage?.data[0]?.turnover || 0,
+                compareAndColor(
+                  secondPlayerSeasonAverage?.data[0]?.turnover || 0,
+                  firstPlayerSeasonAverage?.data[0]?.turnover || 0
+                )
+              )}
               <br />
-              <span>
-                FG%{" "}
-                {seasonAverage.data[0]?.fg_pct
-                  ? (seasonAverage?.data[0]?.fg_pct * 100).toFixed(1)
-                  : 0}
-              </span>
+              {renderStat(
+                "FG%",
+                (firstPlayerSeasonAverage?.data[0]?.fg_pct * 100).toFixed(1) ||
+                  0,
+                secondPlayerSeasonAverage?.data[0]?.fg_pct * 100 || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.fg_pct || 0,
+                  secondPlayerSeasonAverage?.data[0]?.fg_pct || 0
+                )
+              )}
+
               <br />
-              <span>
-                3P%{" "}
-                {seasonAverage.data[0]?.fg3_pct
-                  ? (seasonAverage.data[0]?.fg3_pct * 100).toFixed(1)
-                  : 0}
-              </span>
+              {renderStat(
+                "3PT%",
+                (firstPlayerSeasonAverage?.data[0]?.fg3_pct * 100).toFixed(1) ||
+                  0,
+                secondPlayerSeasonAverage?.data[0]?.fg3_pct * 100 || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.fg3_pct || 0,
+                  secondPlayerSeasonAverage?.data[0]?.fg3_pct || 0
+                )
+              )}
               <br />
-              <span>
-                FT%{" "}
-                {seasonAverage.data[0]?.ft_pct
-                  ? (seasonAverage.data[0]?.ft_pct * 100).toFixed(1)
-                  : 0}
-              </span>
+              {renderStat(
+                "FT%",
+                (firstPlayerSeasonAverage?.data[0]?.ft_pct * 100).toFixed(1) ||
+                  0,
+                secondPlayerSeasonAverage?.data[0]?.ft_pct * 100 || 0,
+                compareAndColor(
+                  firstPlayerSeasonAverage?.data[0]?.ft_pct || 0,
+                  secondPlayerSeasonAverage?.data[0]?.ft_pct || 0
+                )
+              )}
               <br />
             </div>
           )}
+          {/* First Player (Search Results) */}
           <div className="first-player-search-results">
             {allFirstPlayersFound &&
-              !playerIsChosen &&
+              !firstPlayerIsChosen &&
               allFirstPlayersFound?.map((player) => (
                 <div
                   className="search-result-box"
                   key={player.id}
                   onClick={() => {
-                    getPlayerStats(player);
-                    setPlayerIsChosen(true);
+                    getFirstPlayerStats(player);
+                    setFirstPlayerIsChosen(true);
                     setFirstPlayerName(
                       `${player.first_name} ${player.last_name}`
                     );
@@ -164,29 +341,100 @@ const LineChart = ({ openLinks }) => {
               ))}
           </div>
         </div>
+
+        {/* Second Player */}
         <div className="compare-players-box">
-          <form onSubmit={handleSubmit} className="second-player-form">
-            <input
-              type="text"
-              placeholder="Player's Name"
-              onChange={(e) => setSecondPlayerName(e.target.value)}
-              required
-            />
-            <button className="btn btn-secondary">
-              {!isPending ? "Search" : "Searching..."}
-            </button>
+          {/* Second Player (Search Form)*/}
+          <form
+            onSubmit={handleSubmitSecondPlayer}
+            className="second-player-form"
+          >
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faSearch} />
+              <input
+                className="input"
+                type="text"
+                placeholder="Player's Name"
+                onChange={(e) => setSecondSearchItem(e.target.value)}
+                required
+              />
+            </div>
+            {/* <button className="btn btn-secondary">
+              {!secondFormIsPending ? "Search" : "Searching..."}
+            </button> */}
           </form>
+          {/* Second Player (Season Average) */}
+          {secondPlayerSeasonAverage && secondPlayerIsChosen && (
+            <div className="second-player-stats-summary">
+              <img src={secondPlayerPhoto}></img>
+              <br />
+              <br />
+              <b>
+                Season Averages ({secondPlayerSeasonAverage.data[0]?.season})
+              </b>
+              <br />
+              <span>Name: {secondPlayerName}</span>
+              <br />
+              <span>
+                Games Played:{" "}
+                {secondPlayerSeasonAverage.data[0]?.games_played || 0}
+              </span>
+              <br />
+              <span>Mins: {secondPlayerSeasonAverage.data[0]?.min || 0}</span>
+              <br />
+              <span>PPG: {secondPlayerSeasonAverage.data[0]?.pts || 0}</span>
+              <br />
+              <span>REB: {secondPlayerSeasonAverage.data[0]?.reb || 0}</span>
+              <br />
+              <span>AST: {secondPlayerSeasonAverage.data[0]?.ast || 0}</span>
+              <br />
+              <span>BLK {secondPlayerSeasonAverage.data[0]?.blk || 0}</span>
+              <br />
+              <span>STL {secondPlayerSeasonAverage.data[0]?.stl || 0}</span>
+              <br />
+              <span>
+                TOV {secondPlayerSeasonAverage.data[0]?.turnover || 0}
+              </span>
+              <br />
+              <span>
+                FG%{" "}
+                {secondPlayerSeasonAverage.data[0]?.fg_pct
+                  ? (secondPlayerSeasonAverage?.data[0]?.fg_pct * 100).toFixed(
+                      1
+                    )
+                  : 0}
+              </span>
+              <br />
+              <span>
+                3P%{" "}
+                {secondPlayerSeasonAverage.data[0]?.fg3_pct
+                  ? (secondPlayerSeasonAverage.data[0]?.fg3_pct * 100).toFixed(
+                      1
+                    )
+                  : 0}
+              </span>
+              <br />
+              <span>
+                FT%{" "}
+                {secondPlayerSeasonAverage.data[0]?.ft_pct
+                  ? (secondPlayerSeasonAverage.data[0]?.ft_pct * 100).toFixed(1)
+                  : 0}
+              </span>
+              <br />
+            </div>
+          )}
+          {/* Second Player (Search Results)*/}
           <div className="second-player-search-results">
             {allSecondPlayersFound &&
-              !playerIsChosen &&
+              !secondPlayerIsChosen &&
               allSecondPlayersFound?.map((player) => (
                 <div
                   className="search-result-box"
                   key={player.id}
                   onClick={() => {
-                    getPlayerStats(player);
-                    setPlayerIsChosen(true);
-                    setFirstPlayerName(
+                    getSecondPlayerStats(player);
+                    setSecondPlayerIsChosen(true);
+                    setSecondPlayerName(
                       `${player.first_name} ${player.last_name}`
                     );
                   }}
