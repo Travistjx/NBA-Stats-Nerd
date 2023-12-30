@@ -114,6 +114,17 @@
     border-bottom: 1px solid black;
   }
 
+.player-not-active {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 50px;
+}
+
+.compare-players-image-box{
+    height: 150px;
+  
+}
+
   img {
     width: 250px;  
   }
