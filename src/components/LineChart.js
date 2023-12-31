@@ -7,6 +7,8 @@ import "./LineChart.css";
 import playerPhoto from "../assets/player-photos.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/fontawesome-free-solid";
+import loadingAnimation from "../assets/loading-animation.json";
+import Lottie from "lottie-react";
 
 const LineChart = ({ openLinks }) => {
   const [allFirstPlayersFound, setAllFirstPlayersFound] = useState(null);
@@ -15,6 +17,8 @@ const LineChart = ({ openLinks }) => {
   const [secondPlayerName, setSecondPlayerName] = useState(null);
   const [firstFormIsPending, setFirstFormIsPending] = useState(false);
   const [secondFormIsPending, setSecondFormIsPending] = useState(false);
+  const [firstPlayerLoading, setFirstPlayerLoading] = useState(false);
+  const [secondPlayerLoading, setSecondPlayerLoading] = useState(false);
   const [firstPlayerSeasonAverage, setFirstPlayerSeasonAverage] =
     useState(null);
   const [secondPlayerSeasonAverage, setSecondPlayerSeasonAverage] =
@@ -27,16 +31,8 @@ const LineChart = ({ openLinks }) => {
   const [secondPlayerPhoto, setSecondPlayerPhoto] = useState(null);
   const [firstSearchItem, setFirstSearchItem] = useState(null);
   const [secondSearchItem, setSecondSearchItem] = useState(null);
-
-  const [userData, setUserData] = useState({
-    labels: UserData.map((data) => data.year),
-    datasets: [
-      {
-        label: "Users Gained",
-        data: UserData.map((data) => data.userGain),
-      },
-    ],
-  });
+  const [playerChartData, setPlayerChartData] = useState(null);
+  const [graphOption, setGraphOption] = useState("pts");
 
   // compare 2 values and returning a color to be used for <span> tags
   const compareAndColor = (value1, value2) => {
@@ -48,6 +44,119 @@ const LineChart = ({ openLinks }) => {
       return "grey";
     }
   };
+
+  const renderLastTenGameStats = (gameStats, playerName) => (
+    <div className="last-ten-games-stats-comparison">
+      <div className="player-last-ten-games-stats">
+        <div className="player-last-ten-games-stat">{playerName}</div>
+        <div className="player-last-ten-games-stat">
+          <b>PTS</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) => (total = total + currentValue.pts),
+                0
+              ) / 10}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>REB</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) => (total = total + currentValue.reb),
+                0
+              ) / 10}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>AST</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) => (total = total + currentValue.ast),
+                0
+              ) / 10}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>BLK</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) => (total = total + currentValue.blk),
+                0
+              ) / 10}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>STL</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) => (total = total + currentValue.stl),
+                0
+              ) / 10}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>FG%</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {(
+              gameStats?.data?.data
+                .slice(-10)
+                .reduce(
+                  (total, currentValue) =>
+                    (total = total + currentValue.fg_pct * 100),
+                  0
+                ) / 10
+            ).toFixed(2)}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>3P%</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {(
+              gameStats?.data?.data
+                .slice(-10)
+                .reduce(
+                  (total, currentValue) =>
+                    (total = total + currentValue.fg3_pct * 100),
+                  0
+                ) / 10
+            ).toFixed(2)}
+          </span>
+        </div>
+        <div className="player-last-ten-games-stat">
+          <b>FT%</b>
+          <br />
+          <span className="player-last-ten-games-stat-number">
+            {(
+              gameStats?.data?.data
+                .slice(-10)
+                .reduce(
+                  (total, currentValue) =>
+                    (total = total + currentValue.ft_pct * 100),
+                  0
+                ) / 10
+            ).toFixed(2)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   // Method o generate a custom span tag for player season average
   const renderStat = (label, mainValue, otherValue, color) => (
@@ -70,12 +179,9 @@ const LineChart = ({ openLinks }) => {
     console.log(playerName);
     let formattedNameArray = playerName.split(" ");
     const lastName = formattedNameArray[1].slice(0, 5);
-    const charactersNeededFromFirstName = 7 - lastName.length;
-    const firstName = formattedNameArray[0].slice(
-      0,
-      charactersNeededFromFirstName
-    );
+    const firstName = formattedNameArray[0].slice(0, 1);
     const formattedName = lastName.toLowerCase() + firstName.toLowerCase();
+    console.log(formattedName);
 
     const playerPhotoFound = Object.keys(playerPhoto).find((key) =>
       key.includes(formattedName)
@@ -86,6 +192,7 @@ const LineChart = ({ openLinks }) => {
 
   // Set chosen first player's season average, game stats, and photo
   const getFirstPlayerStats = (chosenPlayer) => {
+    setFirstPlayerLoading(true);
     const fetchPlayerStats = async () => {
       const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
       const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
@@ -95,46 +202,71 @@ const LineChart = ({ openLinks }) => {
         axios.get(gameStatsAPI),
       ]);
 
-      let totalPages = gameStatsData.data.meta.total_pages;
+      //to store all the data
+      let totalPageData = null;
 
-      if (totalPages > 1) {
-        const lastPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-        const lastPageData = await axios.get(lastPageAPI);
+      if (seasonAverageData?.data.data[0]?.season) {
+        let totalPages = gameStatsData.data.meta.total_pages;
 
-        let filteredStats = lastPageData?.data.data.filter(
-          (gameStat) => gameStat.min !== "00"
-        );
+        if (totalPages > 1) {
+          const lastPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
+          const lastPageData = await axios.get(lastPageAPI);
 
-        let gameSize = filteredStats.length;
+          let filteredStats = lastPageData?.data.data.filter(
+            (gameStat) =>
+              gameStat.min !== "00" &&
+              gameStat.game.season === 2023 &&
+              gameStat.game.postseason === false
+          );
 
-        setFirstPlayerGameStats(lastPageData);
+          let gameSize = filteredStats.length;
 
-        // Check if more pages are needed (since data on last page might be insufficient)
-        if (gameSize < 10 && totalPages > 1) {
-          totalPages -= 1;
-          const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-          const previousPageData = await axios.get(previousPageAPI);
+          setFirstPlayerGameStats(filteredStats);
 
-          setFirstPlayerGameStats({
-            data: {
-              data: [
-                ...previousPageData?.data.data?.filter(
-                  (gameStat) => gameStat.min !== "00"
-                ),
-                ...lastPageData?.data.data?.filter(
-                  (gameStat) => gameStat.min !== "00"
-                ),
-              ],
-            },
-          });
+          totalPageData = filteredStats;
+          let count = 0;
+
+          // Check if more pages are needed (since data on last page might be insufficient)
+          while (gameSize < 10 && totalPages > 1 && count < 6) {
+            totalPages -= 1;
+            const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
+            const previousPageData = await axios.get(previousPageAPI);
+
+            //get number of games that player actually played in this season
+            filteredStats = previousPageData?.data.data.filter(
+              (gameStat) =>
+                gameStat.min !== "00" &&
+                gameStat.game.season === 2023 &&
+                gameStat.game.postseason === false
+            );
+
+            //concantenate all the results found
+            totalPageData = filteredStats.concat(totalPageData);
+
+            gameSize += filteredStats.length;
+            count += 1;
+          }
         }
       }
 
+      setFirstPlayerGameStats({
+        data: {
+          data: [
+            ...totalPageData?.filter(
+              (gameStat) =>
+                gameStat.min !== "00" &&
+                gameStat.game.season === 2023 &&
+                gameStat.game.postseason === false
+            ),
+          ],
+        },
+      });
       setFirstPlayerSeasonAverage(seasonAverageData.data);
       //setFirstPlayerGameStats(gameStatsData.data);
       setFirstPlayerPhoto(
         getPlayerPhoto(`${chosenPlayer.first_name} ${chosenPlayer.last_name}`)
       );
+      setFirstPlayerLoading(false);
     };
 
     fetchPlayerStats();
@@ -142,6 +274,7 @@ const LineChart = ({ openLinks }) => {
 
   // Set chosen second player's season average, game stats, and photo
   const getSecondPlayerStats = (chosenPlayer) => {
+    setSecondPlayerLoading(true);
     const fetchPlayerStats = async () => {
       const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
       const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
@@ -151,46 +284,70 @@ const LineChart = ({ openLinks }) => {
         axios.get(gameStatsAPI),
       ]);
 
-      let totalPages = gameStatsData.data.meta.total_pages;
+      let totalPageData = null;
 
-      if (totalPages > 1) {
-        const lastPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-        const lastPageData = await axios.get(lastPageAPI);
+      if (seasonAverageData?.data.data[0]?.season) {
+        let totalPages = gameStatsData.data.meta.total_pages;
 
-        let filteredStats = lastPageData?.data.data.filter(
-          (gameStat) => gameStat.min !== "00"
-        );
+        if (totalPages > 1) {
+          const lastPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
+          const lastPageData = await axios.get(lastPageAPI);
 
-        let gameSize = filteredStats.length;
+          let filteredStats = lastPageData?.data.data.filter(
+            (gameStat) =>
+              gameStat.min !== "00" &&
+              gameStat.game.season === 2023 &&
+              gameStat.game.postseason === false
+          );
 
-        setSecondPlayerGameStats(lastPageData);
+          let gameSize = filteredStats.length;
 
-        // Check if more pages are needed (since data on last page might be insufficient)
-        if (gameSize < 10 && totalPages > 1) {
-          totalPages -= 1;
-          const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-          const previousPageData = await axios.get(previousPageAPI);
+          setSecondPlayerGameStats(filteredStats);
 
-          setSecondPlayerGameStats({
-            data: {
-              data: [
-                ...previousPageData?.data.data?.filter(
-                  (gameStat) => gameStat.min !== "00"
-                ),
-                ...lastPageData?.data.data?.filter(
-                  (gameStat) => gameStat.min !== "00"
-                ),
-              ],
-            },
-          });
+          totalPageData = filteredStats;
+          let count = 0;
+
+          // Check if more pages are needed (since data on last page might be insufficient)
+          while (gameSize < 10 && totalPages > 1 && count < 6) {
+            totalPages -= 1;
+            const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
+            const previousPageData = await axios.get(previousPageAPI);
+
+            //get number of games that player actually played in this season
+            filteredStats = previousPageData?.data.data.filter(
+              (gameStat) =>
+                gameStat.min !== "00" &&
+                gameStat.game.season === 2023 &&
+                gameStat.game.postseason === false
+            );
+
+            //concantenate all the results found
+            totalPageData = filteredStats.concat(totalPageData);
+
+            gameSize += filteredStats.length;
+            count += 1;
+          }
         }
       }
 
+      setSecondPlayerGameStats({
+        data: {
+          data: [
+            ...totalPageData?.filter(
+              (gameStat) =>
+                gameStat.min !== "00" &&
+                gameStat.game.season === 2023 &&
+                gameStat.game.postseason === false
+            ),
+          ],
+        },
+      });
       setSecondPlayerSeasonAverage(seasonAverageData.data);
       //setSecondPlayerGameStats(gameStatsData.data);
       setSecondPlayerPhoto(
         getPlayerPhoto(`${chosenPlayer.first_name} ${chosenPlayer.last_name}`)
       );
+      setSecondPlayerLoading(false);
     };
 
     fetchPlayerStats();
@@ -234,48 +391,57 @@ const LineChart = ({ openLinks }) => {
     fetchPlayerProfile();
   };
 
+  const changeGraphOption = (graphOption, label) => {
+    setGraphOption(graphOption);
+    if (firstPlayerGameStats || secondPlayerGameStats) {
+      setPlayerChartData({
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
+        datasets: [
+          {
+            label: label + ` (${firstPlayerName})`,
+            borderColor: "#fa617a",
+            backgroundColor: "#fa617a",
+            data: firstPlayerGameStats?.data?.data
+              .slice(-10)
+              .map((data) => data[graphOption]),
+          },
+          {
+            label: label + ` (${secondPlayerName})`,
+            borderColor: "#4682B4",
+            backgroundColor: "#4682B4",
+            data: secondPlayerGameStats?.data.data
+              .slice(-10)
+              .map((data) => data[graphOption]),
+          },
+        ],
+      });
+    }
+  };
+
   useEffect(() => {
-    setUserData({
-      labels: [1 + " (Latest)", 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      datasets: [
-        {
-          label: `Points scored (${firstPlayerName})`,
-          borderColor: "#ff311f",
-          backgroundColor: "#ff311f",
-          data: firstPlayerGameStats?.data.data
-            .slice(-10)
-            .reverse()
-            .map((data) => data.pts),
-        },
-        {
-          label: `Points scored (${secondPlayerName})`,
-          borderColor: "#1f5aff",
-          backgroundColor: "#1f5aff",
-          data: secondPlayerGameStats?.data.data
-            .slice(-10)
-            .reverse()
-            .map((data) => data.pts),
-        },
-      ],
-    });
-
-    // const fetchData = async () => {
-    //   const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${145}&page=${22}`;
-    //   const response = await axios.get(gameStatsAPI);
-    //   //console.log(response.data.data[3].pts);
-
-    //   setUserData({
-    //     labels: response.data.data.map((data, index) => index),
-    //     datasets: [
-    //       {
-    //         label: "Points scored",
-    //         data: response.data.data.map((data) => data.pts),
-    //       },
-    //     ],
-    //   });
-    // };
-
-    //fetchData();
+    if (firstPlayerGameStats || secondPlayerGameStats) {
+      setPlayerChartData({
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
+        datasets: [
+          {
+            label: `Points (${firstPlayerName})`,
+            borderColor: "#fa617a",
+            backgroundColor: "#fa617a",
+            data: firstPlayerGameStats?.data?.data
+              .slice(-10)
+              .map((data) => data.pts),
+          },
+          {
+            label: `Points (${secondPlayerName})`,
+            borderColor: "#4682B4",
+            backgroundColor: "#4682B4",
+            data: secondPlayerGameStats?.data.data
+              .slice(-10)
+              .map((data) => data.pts),
+          },
+        ],
+      });
+    }
   }, [firstPlayerGameStats, secondPlayerGameStats]);
 
   return (
@@ -303,6 +469,12 @@ const LineChart = ({ openLinks }) => {
             </div>
           </form>
           {/* First Player (Season Average) */}
+          {firstPlayerLoading && (
+            <Lottie
+              animationData={loadingAnimation}
+              className="first-player-loading-animation"
+            />
+          )}
           {firstPlayerSeasonAverage?.data[0]?.season && firstPlayerIsChosen ? (
             <div className="first-player-stats-summary">
               <div className="compare-players-image-box">
@@ -419,7 +591,8 @@ const LineChart = ({ openLinks }) => {
               <br />
             </div>
           ) : (
-            firstPlayerIsChosen && (
+            firstPlayerIsChosen &&
+            !firstPlayerLoading && (
               <div className="player-not-active alert alert-danger">
                 Chosen player is not an active player.
               </div>
@@ -471,6 +644,12 @@ const LineChart = ({ openLinks }) => {
             </button> */}
           </form>
           {/* Second Player (Season Average) */}
+          {secondPlayerLoading && (
+            <Lottie
+              animationData={loadingAnimation}
+              className="second-player-loading-animation"
+            />
+          )}
           {secondPlayerSeasonAverage?.data[0]?.season &&
           secondPlayerIsChosen ? (
             <div className="second-player-stats-summary">
@@ -590,7 +769,8 @@ const LineChart = ({ openLinks }) => {
               <br />
             </div>
           ) : (
-            secondPlayerIsChosen && (
+            secondPlayerIsChosen &&
+            !secondPlayerLoading && (
               <div className="player-not-active alert alert-danger">
                 Chosen player is not an active player.
               </div>
@@ -620,7 +800,60 @@ const LineChart = ({ openLinks }) => {
           </div>
         </div>
       </div>
-      <Bar data={userData} />
+      <h3>Last 10 Games Averages</h3>
+      {firstPlayerGameStats && (
+        <div>
+          {renderLastTenGameStats(firstPlayerGameStats, firstPlayerName)}
+        </div>
+      )}
+      {secondPlayerGameStats && (
+        <div>
+          {renderLastTenGameStats(secondPlayerGameStats, secondPlayerName)}
+        </div>
+      )}
+      <div className="comparison-graph">
+        {/* <div class="compare-players-header">Comparison Graph</div> */}
+        <h3>Graph comparison (Last 10 Games)</h3>
+        <div className="toggle-graph-options">
+          <button
+            className={`graph-option-button ${
+              graphOption === "pts" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("pts", "Points")}
+          >
+            Points
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "reb" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("reb", "Rebounds")}
+          >
+            Rebounds
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "ast" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("ast", "Assists")}
+          >
+            Assists
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "blk" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("blk", "Blocks")}
+          >
+            Blocks
+          </button>
+        </div>
+        {playerChartData ? (
+          <Line data={playerChartData} />
+        ) : (
+          <span className="">No player data found.</span>
+        )}
+      </div>
     </div>
   );
 };
