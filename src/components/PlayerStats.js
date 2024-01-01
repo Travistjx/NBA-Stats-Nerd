@@ -5,6 +5,7 @@ import "./PlayerStats.css";
 import loadingAnimation from "../assets/loading-animation.json";
 import Lottie from "lottie-react";
 import { motion } from "framer-motion";
+import playerPhoto from "../assets/player-photos.json";
 
 const PlayerStats = ({ playerId }) => {
   const controller = useMemo(() => new AbortController(), []);
@@ -12,6 +13,22 @@ const PlayerStats = ({ playerId }) => {
   const [playerProfile, setPlayerProfile] = useState(null);
   const [gameStats, setGameStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  //Function to get corresponding image link based on player name (using imported json file)
+  const getPlayerPhoto = (playerName) => {
+    console.log(playerName);
+    let formattedNameArray = playerName.split(" ");
+    const lastName = formattedNameArray[1].slice(0, 5);
+    const firstName = formattedNameArray[0].slice(0, 1);
+    const formattedName = lastName.toLowerCase() + firstName.toLowerCase();
+    console.log(formattedName);
+
+    const playerPhotoFound = Object.keys(playerPhoto).find((key) =>
+      key.includes(formattedName)
+    );
+    console.log(playerPhotoFound);
+    return playerPhoto ? playerPhoto[playerPhotoFound] : "N/A";
+  };
 
   //Find Team Abbreviation from local json (e.g. Chicago for CHI)
   const findAbbreviationById = (id) => {
@@ -203,6 +220,11 @@ const PlayerStats = ({ playerId }) => {
       >
         <div className="player-stats-info">
           <div className="player-profile">
+            <img
+              src={getPlayerPhoto(
+                `${playerProfile.first_name} ${playerProfile.last_name}`
+              )}
+            />
             <span>
               <b>Name: </b>
               {playerProfile.first_name !== null &&

@@ -31,6 +31,8 @@ const LineChart = ({ openLinks }) => {
   const [secondPlayerPhoto, setSecondPlayerPhoto] = useState(null);
   const [firstSearchItem, setFirstSearchItem] = useState(null);
   const [secondSearchItem, setSecondSearchItem] = useState(null);
+  const [firstPlayerError, setFirstPlayerError] = useState(null);
+  const [secondPlayerError, setSecondPlayerError] = useState(null);
   const [playerChartData, setPlayerChartData] = useState(null);
   const [graphOption, setGraphOption] = useState("pts");
 
@@ -48,7 +50,13 @@ const LineChart = ({ openLinks }) => {
   const renderLastTenGameStats = (gameStats, playerName) => (
     <div className="last-ten-games-stats-comparison">
       <div className="player-last-ten-games-stats">
-        <div className="player-last-ten-games-stat">{playerName}</div>
+        <div className="player-last-ten-games-stat" style={{ width: "20%" }}>
+          <span style={{ fontSize: "18px" }}>
+            <b>{playerName}</b>
+          </span>
+          <br />
+          {`(${gameStats?.data?.data.slice(-10).length} Games)`}
+        </div>
         <div className="player-last-ten-games-stat">
           <b>PTS</b>
           <br />
@@ -247,6 +255,10 @@ const LineChart = ({ openLinks }) => {
             count += 1;
           }
         }
+      } else {
+        setFirstPlayerError("notActive");
+        setFirstPlayerLoading(false);
+        return;
       }
 
       setFirstPlayerGameStats({
@@ -269,12 +281,22 @@ const LineChart = ({ openLinks }) => {
       setFirstPlayerLoading(false);
     };
 
+    // Make sure the same player cannot be chosen, if not, do not fetch api
+    if (chosenPlayer.id === secondPlayerGameStats?.data.data[0].player.id) {
+      console.log(chosenPlayer.id);
+      console.log(secondPlayerGameStats?.data.data[0].player.id);
+      setFirstPlayerError("samePlayer");
+      setFirstPlayerLoading(false);
+      return;
+    }
+
     fetchPlayerStats();
   };
 
   // Set chosen second player's season average, game stats, and photo
   const getSecondPlayerStats = (chosenPlayer) => {
     setSecondPlayerLoading(true);
+
     const fetchPlayerStats = async () => {
       const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
       const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
@@ -328,6 +350,10 @@ const LineChart = ({ openLinks }) => {
             count += 1;
           }
         }
+      } else {
+        setSecondPlayerError("notActive");
+        setSecondPlayerLoading(false);
+        return;
       }
 
       setSecondPlayerGameStats({
@@ -349,6 +375,15 @@ const LineChart = ({ openLinks }) => {
       );
       setSecondPlayerLoading(false);
     };
+
+    // Make sure the same player cannot be chosen, if not, do not fetch api
+    if (chosenPlayer.id === firstPlayerGameStats?.data.data[0].player.id) {
+      console.log(chosenPlayer.id);
+      console.log(firstPlayerGameStats?.data.data[0].player.id);
+      setSecondPlayerError("samePlayer");
+      setSecondPlayerLoading(false);
+      return;
+    }
 
     fetchPlayerStats();
   };
@@ -394,34 +429,58 @@ const LineChart = ({ openLinks }) => {
   const changeGraphOption = (graphOption, label) => {
     setGraphOption(graphOption);
     if (firstPlayerGameStats || secondPlayerGameStats) {
-      setPlayerChartData({
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
-        datasets: [
-          {
-            label: label + ` (${firstPlayerName})`,
-            borderColor: "#fa617a",
-            backgroundColor: "#fa617a",
-            data: firstPlayerGameStats?.data?.data
-              .slice(-10)
-              .map((data) => data[graphOption]),
-          },
-          {
-            label: label + ` (${secondPlayerName})`,
-            borderColor: "#4682B4",
-            backgroundColor: "#4682B4",
-            data: secondPlayerGameStats?.data.data
-              .slice(-10)
-              .map((data) => data[graphOption]),
-          },
-        ],
-      });
+      if (label === "FG%" || label === "3PT%" || label === "FT%") {
+        setPlayerChartData({
+          labels: ["Oldest", 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
+          datasets: [
+            {
+              label: label + ` (${firstPlayerName})`,
+              borderColor: "#fa617a",
+              backgroundColor: "#fa617a",
+              data: firstPlayerGameStats?.data?.data
+                .slice(-10)
+                .map((data) => (data[graphOption] * 100).toFixed(2)),
+            },
+            {
+              label: label + ` (${secondPlayerName})`,
+              borderColor: "#4682B4",
+              backgroundColor: "#4682B4",
+              data: secondPlayerGameStats?.data.data
+                .slice(-10)
+                .map((data) => (data[graphOption] * 100).toFixed(2)),
+            },
+          ],
+        });
+      } else {
+        setPlayerChartData({
+          labels: ["Oldest", 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
+          datasets: [
+            {
+              label: label + ` (${firstPlayerName})`,
+              borderColor: "#fa617a",
+              backgroundColor: "#fa617a",
+              data: firstPlayerGameStats?.data?.data
+                .slice(-10)
+                .map((data) => data[graphOption]),
+            },
+            {
+              label: label + ` (${secondPlayerName})`,
+              borderColor: "#4682B4",
+              backgroundColor: "#4682B4",
+              data: secondPlayerGameStats?.data.data
+                .slice(-10)
+                .map((data) => data[graphOption]),
+            },
+          ],
+        });
+      }
     }
   };
 
   useEffect(() => {
     if (firstPlayerGameStats || secondPlayerGameStats) {
       setPlayerChartData({
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
+        labels: ["Oldest", 2, 3, 4, 5, 6, 7, 8, 9, "Most Recent"],
         datasets: [
           {
             label: `Points (${firstPlayerName})`,
@@ -435,7 +494,7 @@ const LineChart = ({ openLinks }) => {
             label: `Points (${secondPlayerName})`,
             borderColor: "#4682B4",
             backgroundColor: "#4682B4",
-            data: secondPlayerGameStats?.data.data
+            data: secondPlayerGameStats?.data?.data
               .slice(-10)
               .map((data) => data.pts),
           },
@@ -475,7 +534,7 @@ const LineChart = ({ openLinks }) => {
               className="first-player-loading-animation"
             />
           )}
-          {firstPlayerSeasonAverage?.data[0]?.season && firstPlayerIsChosen ? (
+          {!firstPlayerLoading && !firstPlayerError && firstPlayerIsChosen ? (
             <div className="first-player-stats-summary">
               <div className="compare-players-image-box">
                 <img src={firstPlayerPhoto}></img>
@@ -592,9 +651,20 @@ const LineChart = ({ openLinks }) => {
             </div>
           ) : (
             firstPlayerIsChosen &&
-            !firstPlayerLoading && (
-              <div className="player-not-active alert alert-danger">
-                Chosen player is not an active player.
+            !firstPlayerLoading &&
+            firstPlayerError && (
+              <div>
+                {firstPlayerError === "samePlayer" && (
+                  <div className="player-not-active alert alert-danger">
+                    Chosen player cannot be the same as the one you have already
+                    chosen.
+                  </div>
+                )}
+                {firstPlayerError === "notActive" && (
+                  <div className="player-not-active alert alert-danger">
+                    Chosen player is not an active player.
+                  </div>
+                )}
               </div>
             )
           )}
@@ -770,9 +840,20 @@ const LineChart = ({ openLinks }) => {
             </div>
           ) : (
             secondPlayerIsChosen &&
-            !secondPlayerLoading && (
-              <div className="player-not-active alert alert-danger">
-                Chosen player is not an active player.
+            !secondPlayerLoading &&
+            secondPlayerError && (
+              <div>
+                {secondPlayerError === "samePlayer" && (
+                  <div className="player-not-active alert alert-danger">
+                    Chosen player cannot be the same as the one you have already
+                    chosen.
+                  </div>
+                )}
+                {secondPlayerError === "notActive" && (
+                  <div className="player-not-active alert alert-danger">
+                    Chosen player is not an active player.
+                  </div>
+                )}
               </div>
             )
           )}
@@ -800,7 +881,8 @@ const LineChart = ({ openLinks }) => {
           </div>
         </div>
       </div>
-      <h3>Last 10 Games Averages</h3>
+      <h3>Last 10 Games Averages </h3>
+      <hr />
       {firstPlayerGameStats && (
         <div>
           {renderLastTenGameStats(firstPlayerGameStats, firstPlayerName)}
@@ -814,6 +896,7 @@ const LineChart = ({ openLinks }) => {
       <div className="comparison-graph">
         {/* <div class="compare-players-header">Comparison Graph</div> */}
         <h3>Graph comparison (Last 10 Games)</h3>
+        <hr />
         <div className="toggle-graph-options">
           <button
             className={`graph-option-button ${
@@ -847,9 +930,42 @@ const LineChart = ({ openLinks }) => {
           >
             Blocks
           </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "stl" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("stl", "Steals")}
+          >
+            Steals
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "fg_pct" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("fg_pct", "FG%")}
+          >
+            Field Goal %
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "fg3_pct" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("fg3_pct", "3PT%")}
+          >
+            3-Pointer %
+          </button>
+          <button
+            className={`graph-option-button ${
+              graphOption === "ft_pct" ? "btn-selected" : ""
+            }`}
+            onClick={() => changeGraphOption("ft_pct", "FT%")}
+          >
+            Free Throw %
+          </button>
         </div>
+
         {playerChartData ? (
-          <Line data={playerChartData} />
+          <Line data={playerChartData} className="line-graph" />
         ) : (
           <span className="">No player data found.</span>
         )}

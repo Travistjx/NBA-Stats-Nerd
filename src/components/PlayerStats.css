@@ -6,10 +6,15 @@
     left: 50%;
     top: 50%;
     transform: translateX(-50%);
-    width: 100vw;
-  
+    width: 100%;
+   
+   
 }
 
+/* .player-stats-info {
+    margin-top: 200px;
+    
+} */
 
 .player-profile {
     
@@ -52,7 +57,7 @@ td {
 .season-average thead tr th:nth-child(9) {
     border-right: 2px solid blue;
 }
-
+/* 
 @media screen and (max-width: 900px) {
     .player-stats-info{
         overflow: auto;
@@ -99,4 +104,4 @@ td {
     }
     
 }
-
+ */
