@@ -5,7 +5,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import LiveGameStats from "./LiveGameStats";
 import PastGameStats from "./PastGameStats";
-import LineChart from "./LineChart";
+import ComparePlayers from "./ComparePlayers";
 
 const AnimatedRoutes = ({ openLinks }) => {
   const location = useLocation();
@@ -31,8 +31,8 @@ const AnimatedRoutes = ({ openLinks }) => {
         />
         <Route
           exact
-          path="/test"
-          element={<LineChart openLinks={openLinks} />}
+          path="/compareplayers"
+          element={<ComparePlayers openLinks={openLinks} />}
         />
       </Routes>
     </AnimatePresence>

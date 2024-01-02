@@ -1,5 +1,5 @@
 .player-stats {
-    height: 110vh;
+  
     position: relative;
     display:flex;
     justify-content: center;
@@ -7,7 +7,7 @@
     top: 50%;
     transform: translateX(-50%);
     width: 100%;
-   
+    margin-bottom: 100px;
    
 }
 
@@ -17,19 +17,31 @@
 } */
 
 .player-profile {
-    
+    display: flex;
+    margin-bottom: 40px;
+    position: relative;
+    width: 42%;
 }
 
+.player-profile-photo {
+    height: auto;
+    width: 200px;
+}
+
+.player-profile-information {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+
 .stats-summary {
-   
-    
-   
+
 }
 
 .last-ten-games {
-   
-   
     margin-top: 30px;
+    
 }
 
 table {

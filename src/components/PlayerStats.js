@@ -129,28 +129,6 @@ const PlayerStats = ({ playerId }) => {
     };
   }, [playerId, controller]);
 
-  // useEffect(() => {
-  //   if (gameStats && gameStats.data && gameStats.data.data) {
-  //     setPlayerData({
-  //       labels: gameStats?.data?.data
-  //         .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
-  //         .slice(-10) //from the back
-  //         .reverse() //in descending order
-  //         .map((data) => data.pts),
-  //       datasets: [
-  //         {
-  //           label: "Last 10 Games",
-  //           data: gameStats?.data?.data
-  //             .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
-  //             .slice(-10) //from the back
-  //             .reverse() //in descending order
-  //             .map((data) => data.team.abbreviation),
-  //         },
-  //       ],
-  //     });
-  //   }
-  // }, [gameStats]);
-
   // To get the last 10 games that selected player partook in
   const gameStatsRows = gameStats?.data?.data
     .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
@@ -220,48 +198,51 @@ const PlayerStats = ({ playerId }) => {
       >
         <div className="player-stats-info">
           <div className="player-profile">
-            <img
-              src={getPlayerPhoto(
-                `${playerProfile.first_name} ${playerProfile.last_name}`
-              )}
-            />
-            <span>
-              <b>Name: </b>
-              {playerProfile.first_name !== null &&
-              playerProfile.first_name !== "" &&
-              playerProfile.last_name !== null &&
-              playerProfile.last_name !== ""
-                ? playerProfile.first_name + " " + playerProfile.last_name
-                : NaN}
-            </span>
-            <br />
-            <span>
-              <b>Position: </b>
-              {playerProfile?.position !== null &&
-              playerProfile?.position !== ""
-                ? playerProfile.position
-                : NaN}
-            </span>
-            <br />
-            <span>
-              <b>Height: </b>
-              {playerProfile?.height_feet !== null &&
-              playerProfile?.height_feet !== "" &&
-              playerProfile?.height_inches !== null &&
-              playerProfile?.height_inches !== ""
-                ? `${playerProfile.height_feet}'${playerProfile.height_inches}"`
-                : NaN}
-            </span>
-            <br />
-            <span>
-              <b>Weight: </b>
-              {playerProfile?.weight_pounds !== null &&
-              playerProfile?.weight_pounds !== ""
-                ? `${playerProfile?.weight_pounds}lb`
-                : NaN}
-            </span>
-            <br />
-            <br />
+            <div className="player-profile-photo-space">
+              <img
+                className="player-profile-photo"
+                src={getPlayerPhoto(
+                  `${playerProfile.first_name} ${playerProfile.last_name}`
+                )}
+              />
+            </div>
+            <div className="player-profile-information">
+              <span>
+                <b>Name: </b>
+                {playerProfile.first_name !== null &&
+                playerProfile.first_name !== "" &&
+                playerProfile.last_name !== null &&
+                playerProfile.last_name !== ""
+                  ? playerProfile.first_name + " " + playerProfile.last_name
+                  : NaN}
+              </span>
+              <br />
+              <span>
+                <b>Position: </b>
+                {playerProfile?.position !== null &&
+                playerProfile?.position !== ""
+                  ? playerProfile.position
+                  : NaN}
+              </span>
+              <br />
+              <span>
+                <b>Height: </b>
+                {playerProfile?.height_feet !== null &&
+                playerProfile?.height_feet !== "" &&
+                playerProfile?.height_inches !== null &&
+                playerProfile?.height_inches !== ""
+                  ? `${playerProfile.height_feet}'${playerProfile.height_inches}"`
+                  : NaN}
+              </span>
+              <br />
+              <span>
+                <b>Weight: </b>
+                {playerProfile?.weight_pounds !== null &&
+                playerProfile?.weight_pounds !== ""
+                  ? `${playerProfile?.weight_pounds}lb`
+                  : NaN}
+              </span>
+            </div>
           </div>
           {/* Display the current season average (if applicable)*/}
           <div className="stats-summary">

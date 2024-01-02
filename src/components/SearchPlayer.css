@@ -14,7 +14,6 @@
     top: 50%;
     transform: translate(-50%, 700%);
     transition: transform 5s;
-    margin-bottom: 200px;   
 }
 
 /* Transition for form/input */
@@ -52,6 +51,7 @@
     transform: translateX(-50%);
     width: 100%;
     margin-top: 200px;
+    
 }
 
 
