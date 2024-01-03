@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Home/Main page structure */
+.home-page{
+    display: flex;
+    justify-content: center;
+    transition: transform 0.3s ease-out;
+    transform: translateY(0px);
+}
+
+.home-page-adjusted{
+    display: flex;
+    justify-content: center;
+    transform: translateY(50px);
+    transition: transform 0.3s ease-out;
+}
+
+/* Basketball animation */
+.basketball-animation {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 550px;
+    transform: translate(-95%, 10%);
+ 
+}
+
+/* Home Buttons */
+.home-buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    gap: 1rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-5%, 150%);
+}
+
+
+@media only screen and (max-width: 750px) {
+   
+    /* Home Buttons */
+    .home-buttons {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 15rem;
+        gap: 1rem;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, 70%);
+    }
+    
+    /* Basketball animation */
+    .basketball-animation {
+        visibility: hidden;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 550px;
+        transform: translate(-95%, -40%);
+     
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    /* Home Buttons */
+    .home-buttons {     
+        transform: translate(-50%, 50%);
+    }
+}
+
+
+@media only screen and (max-width: 300px) {
+    /* Home Buttons */
+    .home-buttons {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 10rem;
+        gap: 1rem;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, 60%);
+    }
+}

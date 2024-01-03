@@ -1,23 +1,29 @@
 import React from "react";
 import Lottie from "lottie-react";
-import animationData from "../assets/basketball-animation.json";
+import basketballAnimation from "../assets/basketball-animation.json";
 import { Link } from "react-router-dom";
-import "./Home.css";
+import styles from "./Home.module.css";
 import { motion } from "framer-motion";
 
-const Home = () => {
+const Home = ({ openLinks }) => {
   return (
     <motion.div
-      className="home-page"
+      className={openLinks ? styles["home-page-adjusted"] : styles["home-page"]}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <div>
-        <Lottie animationData={animationData} className="lottie-animation" />
+        <Lottie
+          animationData={basketballAnimation}
+          className={styles["basketball-animation"]}
+        />
       </div>
-      <div className="home-buttons">
-        <Link className="btn btn-primary" to="/playerstats">
+      <div className={styles["home-buttons"]}>
+        <Link className="btn btn-primary" to="/compareplayers">
+          Compare Players
+        </Link>
+        <Link className="btn btn-primary" to="/searchplayer">
           Search for Player
         </Link>
         <Link className="btn btn-primary" to="/livegamestats">

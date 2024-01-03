@@ -1,20 +1,22 @@
-import { useState, useEffect } from "react";
-import "./SearchPlayer.css";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useState } from "react";
+import styles from "./SearchPlayer.module.css";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import PlayerStats from "./PlayerStats";
 
-const SearchPlayer = () => {
-  const navigate = useNavigate();
+const SearchPlayer = ({ openLinks }) => {
   const [playerName, setPlayerName] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [buttonIsClicked, setbuttonIsClicked] = useState(false);
+  const [playerClicked, setPlayerClicked] = useState(false);
   const [playerData, setPlayerData] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
 
+  /* Handle submit when a player is selected*/
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsPending(true);
 
+    // replace space with +, so maintain valid url when used with url
     let formattedPlayerName = playerName.trim().replace(/\s+/g, "+");
 
     if (!formattedPlayerName) {
@@ -32,7 +34,7 @@ const SearchPlayer = () => {
     }, 5000);
 
     return fetch(
-      `https://www.balldontlie.io/api/v1/players?search=${playerName}`,
+      `https://www.balldontlie.io/api/v1/players?search=${formattedPlayerName}`,
       { signal }
     )
       .then((res) => res.json())
@@ -40,6 +42,7 @@ const SearchPlayer = () => {
         setPlayerData(data.data);
         setIsPending(false);
         setbuttonIsClicked(true);
+        setPlayerClicked(false);
       })
       .catch((error) => {
         console.error("Error fetching player data:", error);
@@ -50,98 +53,78 @@ const SearchPlayer = () => {
       });
   };
 
-  useEffect(() => {}, [playerName]);
-
-  let groupSize = 2;
-
-  let groups = playerData?.reduce(function (acc, item, index) {
-    if (index % groupSize === 0) {
-      acc.push([item]);
-    } else {
-      acc[acc.length - 1].push(item);
-    }
-    return acc;
-  }, []);
-
   return (
+    /* Motion div to add fade in and out when switching pages */
     <motion.div
+      className={
+        openLinks
+          ? styles["player-stats-page-adjusted"]
+          : styles["player-stats-page"]
+      }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <CSSTransition
-        in={buttonIsClicked}
-        timeout={500}
-        classNames="player-search-div"
+      {/* Fade in / Out when search results appear when player name is searched */}
+      <div
+        className={
+          buttonIsClicked
+            ? styles["player-search-container-top"]
+            : styles["player-search-container"]
+        }
       >
-        <div className="player-search-div">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-8">
-                <input
-                  placeholder="Player Name"
-                  type="text"
-                  className="form-control"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="col-4">
-                <button className="btn btn-secondary">
-                  {!isPending ? "Search" : "Searching..."}
-                </button>
-              </div>
+        {/* Form to take in player name  */}
+        <form onSubmit={handleSubmit} className="player-search-form">
+          <div className="row">
+            <div className="col-8">
+              <input
+                placeholder="Player Name"
+                type="text"
+                className="form-control"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                required
+              />
             </div>
-          </form>
-        </div>
-      </CSSTransition>
-      <CSSTransition
-        in={playerData !== null}
-        timeout={500}
-        classNames="search-results"
-        unmountOnExit
-      >
-        {playerData && (
-          <div className="search-results">
-            <h2>Player Information</h2>
-            <br />
-            <div>
-              <div className="scrollable-container">
-                <TransitionGroup>
-                  {groups.map((group, rowIndex) => (
-                    <CSSTransition
-                      key={rowIndex}
-                      timeout={500}
-                      classNames="player"
-                    >
-                      <div className="row">
-                        {group.map((player) => (
-                          <div className="col-6" key={player.id}>
-                            <div
-                              className="player-box"
-                              onClick={() => {
-                                // Pass player.id to PlayerStats component using state
-                                navigate(`/playerstats/${player.id}`, {
-                                  state: { playerId: player.id },
-                                });
-                              }}
-                            >
-                              {`${player.first_name} ${player.last_name}`}
-                              <br />
-                              {`Team: ${player.team.full_name}`}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CSSTransition>
-                  ))}
-                </TransitionGroup>
-              </div>
+            <div className="col-4">
+              <button className="btn btn-secondary">
+                {!isPending ? "Search" : "Searching..."}
+              </button>
             </div>
           </div>
-        )}
-      </CSSTransition>
+        </form>
+      </div>
+      {/* Search results  */}
+      {!playerClicked && playerData != null && (
+        <div className={`${styles["search-results"]} ${styles["fade-in"]}`}>
+          <h2 className={styles["search-title"]}>Search Results</h2>
+          <br />
+          <div>
+            <div className={styles["scrollable-container"]}>
+              {playerData.map((player) => (
+                <div
+                  className={styles["player-box"]}
+                  key={player.id}
+                  onClick={() => {
+                    setPlayerClicked(true);
+                    setPlayerId(player.id);
+                  }}
+                >
+                  {`${player.first_name} ${player.last_name}`}
+                  <br />
+                  {`Team: ${player.team.full_name}`}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Display player stats based on player chosen  */}
+      {playerClicked && (
+        <div className={styles["player-stats-div"]}>
+          <PlayerStats playerId={playerId} />
+        </div>
+      )}
     </motion.div>
   );
 };

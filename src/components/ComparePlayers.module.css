@@ -1,0 +1,64 @@
+/* Main page */
+.compare-players-page {
+    max-width: 1000px; 
+    margin: 0 auto;
+    overflow: hidden;
+    transform: translateY(0);
+}
+
+/* Main page */
+.compare-players-page-adjusted {
+    max-width: 1000px; 
+    margin: 0 auto;
+    overflow: hidden;
+    transform: translateY(50px);
+}
+
+/* Customization for the player boxes */
+.compare-players-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 30px;
+}
+
+/* Main header for the page */
+.compare-players-header {
+    background-color: #272727;
+    color: #fff;
+    margin-top: 50px;
+    padding: 10px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+  }
+
+/* Customizations for the last ten games corner */
+.player-last-ten-games-stats{
+    display: flex;
+    align-items: center;
+    height: 80px;
+}
+
+
+.player-last-ten-games-stat{
+    padding: 15px;
+    border: 1px solid #c4c4c4;
+    text-align: center;
+    height: 100%;
+    width: 10%;
+}
+
+.player-last-ten-games-stat-number {
+    font-size: 20px;
+}
+
+/* Customize the margin of graph */
+.comparison-graph {
+    margin-top: 40px;
+    margin-bottom: 100px;
+}
+
+

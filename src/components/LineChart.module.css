@@ -1,0 +1,34 @@
+/* Buttons to toggle between graph options */
+.graph-option-button {
+    margin-left: 5px;
+    border: 1px solid #7a7a7a;
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    box-shadow: 0px 0px 8px #d2d2d2;
+}
+
+.graph-option-button:hover {
+    background-color: whitesmoke;
+    color: black;
+    transform: scale(1.05);
+}
+
+/* Highlight the button if selected/hovered */
+.btn-selected {
+    background-color: #121212;
+    color: white;
+}
+
+.btn-selected:hover {
+    background-color: #121212;
+    color: white;
+    transform: scale(1.05); 
+}
+
+/* Add some margin to the graph */
+.line-graph {
+    margin-top: 30px;
+}
