@@ -6,7 +6,7 @@
     align-self: flex-start;
 }
 
-.live-game-stats-container.adjusted {
+.live-game-stats-container-adjusted {
     display: flex;
     justify-content: center;
     flex-direction: column;

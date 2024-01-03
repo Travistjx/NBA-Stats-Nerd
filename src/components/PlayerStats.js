@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import teamData from "../assets/team-name-id.json";
-import "./PlayerStats.css";
+import styles from "./PlayerStats.module.css";
 import loadingAnimation from "../assets/loading-animation.json";
 import Lottie from "lottie-react";
 import { motion } from "framer-motion";
-import playerPhoto from "../assets/player-photos.json";
+import playerPhoto from "../assets/photos.json";
 
 const PlayerStats = ({ playerId }) => {
-  const controller = useMemo(() => new AbortController(), []);
   const [seasonAverage, setSeasonAverage] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
   const [gameStats, setGameStats] = useState(null);
@@ -16,17 +15,14 @@ const PlayerStats = ({ playerId }) => {
 
   //Function to get corresponding image link based on player name (using imported json file)
   const getPlayerPhoto = (playerName) => {
-    console.log(playerName);
     let formattedNameArray = playerName.split(" ");
     const lastName = formattedNameArray[1].slice(0, 5);
     const firstName = formattedNameArray[0].slice(0, 1);
     const formattedName = lastName.toLowerCase() + firstName.toLowerCase();
-    console.log(formattedName);
 
     const playerPhotoFound = Object.keys(playerPhoto).find((key) =>
       key.includes(formattedName)
     );
-    console.log(playerPhotoFound);
     return playerPhoto ? playerPhoto[playerPhotoFound] : "N/A";
   };
 
@@ -40,12 +36,6 @@ const PlayerStats = ({ playerId }) => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        //set timeout
-        const timeoutId = setTimeout(() => {
-          console.error("Request timed out");
-          controller.abort();
-        }, 5000);
-
         const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${playerId}`;
         const playerProfileAPI = `https://www.balldontlie.io/api/v1/players/${playerId}`;
         const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}`;
@@ -53,83 +43,86 @@ const PlayerStats = ({ playerId }) => {
         //retrieve data from api asynchronously
         const [seasonAverageData, playerProfileData, gameStatsData] =
           await Promise.all([
-            axios.get(seasonAverageAPI),
-            axios.get(playerProfileAPI),
-            axios.get(gameStatsAPI),
+            axios.get(seasonAverageAPI, { timeout: 10000 }),
+            axios.get(playerProfileAPI, { timeout: 10000 }),
+            axios.get(gameStatsAPI, { timeout: 10000 }),
           ]);
-
-        console.log("Season Average Data:", seasonAverageData.data);
-        console.log("Player Profile Data:", playerProfileData.data);
-        console.log("Game Stats Data:", gameStatsData.data);
 
         //set season average and player profile data
         setSeasonAverage(seasonAverageData.data);
         setPlayerProfile(playerProfileData.data);
 
+        //to store all the game stats data
+        let totalPageData = null;
+
         // Find total pages for data
         let totalPages = gameStatsData.data.meta.total_pages;
-        console.log("Total Pages:", totalPages);
 
         //If pages > 1, fetch data from the last page for specific player
         if (totalPages > 1) {
           const lastPageApiUrl = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&page=${totalPages}`;
-          const lastPageData = await axios.get(lastPageApiUrl);
+          const lastPageData = await axios.get(lastPageApiUrl, {
+            timeout: 10000,
+          });
 
-          console.log("Data from Last Page:", lastPageData.data);
-
-          let filteredStats = lastPageData.data.data?.filter(
-            (gameStat) => gameStat.min !== "00"
+          let filteredStats = lastPageData?.data.data.filter(
+            (gameStat) =>
+              gameStat.min !== "00" &&
+              gameStat.game.season === 2023 &&
+              gameStat.game.postseason === false
           );
 
           let gameSize = filteredStats.length;
-          console.log(gameSize);
 
-          setGameStats(lastPageData);
+          setGameStats(filteredStats);
+
+          totalPageData = filteredStats;
+          let count = 0;
 
           // Check if more pages are needed (since data on last page might be insufficient)
-          if (gameSize < 10 && totalPages > 1) {
+          while (gameSize < 10 && totalPages > 1 && count < 6) {
             totalPages -= 1;
-            const previousPageApiUrl = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&page=${totalPages}`;
-            const previousPageData = await axios.get(previousPageApiUrl);
+            const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&page=${totalPages}`;
+            const previousPageData = await axios.get(previousPageAPI);
 
-            console.log("Data from Previous Page:", previousPageData.data);
-
-            filteredStats = previousPageData.data.data?.filter(
-              (gameStat) => gameStat.min !== "00"
+            //get number of games that player actually played in this season
+            filteredStats = previousPageData?.data.data.filter(
+              (gameStat) =>
+                gameStat.min !== "00" &&
+                gameStat.game.season === 2023 &&
+                gameStat.game.postseason === false
             );
 
-            gameSize += filteredStats.length;
-            console.log(gameSize);
+            //concantenate all the results found
+            totalPageData = filteredStats.concat(totalPageData);
 
-            setGameStats({
-              data: {
-                data: [
-                  ...previousPageData.data.data?.filter(
-                    (gameStat) => gameStat.min !== "00"
-                  ),
-                  ...lastPageData.data.data?.filter(
-                    (gameStat) => gameStat.min !== "00"
-                  ),
-                ],
-              },
-            });
+            gameSize += filteredStats.length;
+            count += 1;
           }
         }
 
+        setGameStats({
+          data: {
+            data: [
+              ...totalPageData?.filter(
+                (gameStat) =>
+                  gameStat.min !== "00" &&
+                  gameStat.game.season === 2023 &&
+                  gameStat.game.postseason === false
+              ),
+            ],
+          },
+        });
         setIsLoading(false);
-        clearTimeout(timeoutId);
       } catch (error) {
         console.error("Error fetching player data:", error);
       }
     };
 
     fetchData();
-    return () => {
-      controller.abort();
-    };
-  }, [playerId, controller]);
+  }, [playerId]);
 
-  // To get the last 10 games that selected player partook in
+  // Method to get and display the last 10 games that selected player partook in
   const gameStatsRows = gameStats?.data?.data
     .filter((gameStat) => gameStat.min !== "00") //filter out those that didn't play
     .slice(-10) //from the back
@@ -186,27 +179,32 @@ const PlayerStats = ({ playerId }) => {
     ));
 
   return isLoading ? (
-    <Lottie animationData={loadingAnimation} className="loading-animation" />
+    <Lottie
+      animationData={loadingAnimation}
+      className={styles["loading-animation"]}
+    />
   ) : (
     seasonAverage && playerProfile && gameStats && (
-      //Display player profile information
+      // Fade in / out when entering or leaving page
       <motion.div
-        className="player-stats"
+        className={styles["player-stats"]}
         initial={{ opacity: 0, transition: { duration: 1 } }}
         animate={{ opacity: 1, transition: { duration: 1 } }}
         exit={{ opacity: 0, transition: { duration: 1 } }}
       >
-        <div className="player-stats-info">
-          <div className="player-profile">
-            <div className="player-profile-photo-space">
+        {/* Display player profile information  */}
+        <div className={styles["player-stats-info"]}>
+          <div className={styles["player-profile"]}>
+            <div className={styles["player-profile-photo-space"]}>
               <img
-                className="player-profile-photo"
+                className={styles["player-profile-photo"]}
                 src={getPlayerPhoto(
                   `${playerProfile.first_name} ${playerProfile.last_name}`
                 )}
+                alt=""
               />
             </div>
-            <div className="player-profile-information">
+            <div className={styles["player-profile-information"]}>
               <span>
                 <b>Name: </b>
                 {playerProfile.first_name !== null &&
@@ -244,10 +242,11 @@ const PlayerStats = ({ playerId }) => {
               </span>
             </div>
           </div>
+
           {/* Display the current season average (if applicable)*/}
-          <div className="stats-summary">
+          <div className={styles["stats-summary"]}>
             <b>Current Season (If Applicable)</b>
-            <table className="season-average">
+            <table className={styles["season-average"]}>
               <thead>
                 <tr>
                   <th>Season</th>
@@ -296,7 +295,7 @@ const PlayerStats = ({ playerId }) => {
           </div>
 
           {/* Display the stats of last 10 games (if applicable)*/}
-          <div className="last-ten-games">
+          <div className={styles["last-ten-games"]}>
             <b>Last 10 Games (If Applicable)</b>
             <table>
               <thead>

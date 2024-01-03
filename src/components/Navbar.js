@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./Navbar.css";
+import styles from "./Navbar.module.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/fontawesome-free-solid";
@@ -7,8 +7,6 @@ import { faCaretDown } from "@fortawesome/fontawesome-free-solid";
 const Navbar = ({ openLinks, setOpenLinks }) => {
   const [openProfile, setOpenProfile] = useState(false);
   const dropdownRef = useRef(null);
-
-  console.log(openLinks);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,14 +30,21 @@ const Navbar = ({ openLinks, setOpenLinks }) => {
 
   return (
     <div>
-      <nav className="nav">
-        <Link to="/" className="site-title">
+      <nav className={styles["nav"]}>
+        <Link to="/" className={styles["site-title"]}>
           NBA Stats Nerd
         </Link>
-        <div className={`nav-links${openLinks ? "-responsive" : ""}`}>
+        <div
+          className={
+            openLinks ? styles["nav-links-responsive"] : styles["nav-links"]
+          }
+        >
           <ul>
             <li>
-              <Link to="/playerstats">Player Stats</Link>
+              <Link to="/compareplayers">Compare Players</Link>
+            </li>
+            <li>
+              <Link to="/searchplayer">Search Player</Link>
             </li>
             <li>
               <Link
@@ -48,11 +53,14 @@ const Navbar = ({ openLinks, setOpenLinks }) => {
                 }
               >
                 Games Stats{" "}
-                <FontAwesomeIcon icon={faCaretDown} className="faCaretDown" />
+                <FontAwesomeIcon
+                  icon={faCaretDown}
+                  className={styles["faCaretDown"]}
+                />
               </Link>
             </li>
             {openProfile && (
-              <div className="drop-down" ref={dropdownRef}>
+              <div className={styles["drop-down"]} ref={dropdownRef}>
                 <Link to="/livegamestats">Live Games </Link>
                 <Link to="/pastgamestats">Past Games</Link>
               </div>
@@ -60,7 +68,7 @@ const Navbar = ({ openLinks, setOpenLinks }) => {
           </ul>
         </div>
         <Link
-          className="navbar-icon"
+          className={styles["navbar-icon"]}
           onClick={() => setOpenLinks((prev) => !prev)}
         >
           &#9776;

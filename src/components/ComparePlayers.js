@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./ComparePlayers.module.css";
 import LineChart from "./LineChart";
-import GetSecondPlayerStats from "./GetSecondPlayerStats";
-import GetFirstPlayerStats from "./GetFirstPlayerStats";
+import ComparePlayerStats from "./ComparePlayerStats";
+import { motion } from "framer-motion";
 
 const ComparePlayers = ({ openLinks }) => {
-  const [firstPlayerName, setFirstPlayerName] = useState(null);
-  const [secondPlayerName, setSecondPlayerName] = useState(null);
+  const [firstPlayerProfile, setFirstPlayerProfile] = useState(null);
+  const [secondPlayerProfile, setSecondPlayerProfile] = useState(null);
   const [firstPlayerSeasonAverage, setFirstPlayerSeasonAverage] =
     useState(null);
   const [secondPlayerSeasonAverage, setSecondPlayerSeasonAverage] =
@@ -14,185 +14,133 @@ const ComparePlayers = ({ openLinks }) => {
   const [firstPlayerGameStats, setFirstPlayerGameStats] = useState(null);
   const [secondPlayerGameStats, setSecondPlayerGameStats] = useState(null);
 
-  const renderLastTenGameStats = (gameStats, playerName) => (
+  /* Render/Display template for each game stat (last 10 game averages) */
+  const renderGameStats = (gameStats, label, statsType) => (
+    <div className={styles["player-last-ten-games-stat"]}>
+      <b>{label}</b>
+      <br />
+      <span className={styles["player-last-ten-games-stat-number"]}>
+        {label === "FT%" || label === "FG%" || label === "3PT%"
+          ? (
+              gameStats?.data?.data
+                .slice(-10)
+                .reduce(
+                  (total, currentValue) =>
+                    (total = total + currentValue[statsType] * 100),
+                  0
+                ) / 10
+            ).toFixed(2)
+          : gameStats?.data?.data
+              .slice(-10)
+              .reduce(
+                (total, currentValue) =>
+                  (total = total + currentValue[statsType]),
+                0
+              ) / 10}
+      </span>
+    </div>
+  );
+
+  /* Render/Display all game stats (last 10 game averages)*/
+  const renderLastTenGameStats = (gameStats, player) => (
     <div className="last-ten-games-stats-comparison">
-      <div className="player-last-ten-games-stats">
-        <div className="player-last-ten-games-stat" style={{ width: "20%" }}>
+      <div className={styles["player-last-ten-games-stats"]}>
+        <div
+          className={styles["player-last-ten-games-stat"]}
+          style={{ width: "20%" }}
+        >
           <span style={{ fontSize: "18px" }}>
-            <b>{playerName}</b>
+            {`${player.first_name} ${player.last_name}`}
           </span>
           <br />
           {`(${gameStats?.data?.data.slice(-10).length} Games)`}
         </div>
-        <div className="player-last-ten-games-stat">
-          <b>PTS</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {gameStats?.data?.data
-              .slice(-10)
-              .reduce(
-                (total, currentValue) => (total = total + currentValue.pts),
-                0
-              ) / 10}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>REB</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {gameStats?.data?.data
-              .slice(-10)
-              .reduce(
-                (total, currentValue) => (total = total + currentValue.reb),
-                0
-              ) / 10}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>AST</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {gameStats?.data?.data
-              .slice(-10)
-              .reduce(
-                (total, currentValue) => (total = total + currentValue.ast),
-                0
-              ) / 10}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>BLK</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {gameStats?.data?.data
-              .slice(-10)
-              .reduce(
-                (total, currentValue) => (total = total + currentValue.blk),
-                0
-              ) / 10}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>STL</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {gameStats?.data?.data
-              .slice(-10)
-              .reduce(
-                (total, currentValue) => (total = total + currentValue.stl),
-                0
-              ) / 10}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>FG%</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {(
-              gameStats?.data?.data
-                .slice(-10)
-                .reduce(
-                  (total, currentValue) =>
-                    (total = total + currentValue.fg_pct * 100),
-                  0
-                ) / 10
-            ).toFixed(2)}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>3P%</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {(
-              gameStats?.data?.data
-                .slice(-10)
-                .reduce(
-                  (total, currentValue) =>
-                    (total = total + currentValue.fg3_pct * 100),
-                  0
-                ) / 10
-            ).toFixed(2)}
-          </span>
-        </div>
-        <div className="player-last-ten-games-stat">
-          <b>FT%</b>
-          <br />
-          <span className="player-last-ten-games-stat-number">
-            {(
-              gameStats?.data?.data
-                .slice(-10)
-                .reduce(
-                  (total, currentValue) =>
-                    (total = total + currentValue.ft_pct * 100),
-                  0
-                ) / 10
-            ).toFixed(2)}
-          </span>
-        </div>
+        {renderGameStats(gameStats, "PTS", "pts")}
+        {renderGameStats(gameStats, "REB", "reb")}
+        {renderGameStats(gameStats, "AST", "ast")}
+        {renderGameStats(gameStats, "BLK", "blk")}
+        {renderGameStats(gameStats, "STL", "stl")}
+        {renderGameStats(gameStats, "FG%", "fg_pct")}
+        {renderGameStats(gameStats, "3PT%", "fg3_pct")}
+        {renderGameStats(gameStats, "FT%", "ft_pct")}
       </div>
     </div>
   );
 
   return (
-    <div className={styles["compare-players-page"]}>
-      <div class="compare-players-header">
-        Player Comparison (Current Season)
-      </div>
-      <div className={styles["compare-players-boxes"]}>
-        {/* First Player */}
-        <GetFirstPlayerStats
-          firstPlayerName={firstPlayerName}
-          setFirstPlayerName={setFirstPlayerName}
-          firstPlayerSeasonAverage={firstPlayerSeasonAverage}
-          setFirstPlayerSeasonAverage={setFirstPlayerSeasonAverage}
-          firstPlayerGameStats={firstPlayerGameStats}
-          setFirstPlayerGameStats={setFirstPlayerGameStats}
-          secondPlayerSeasonAverage={secondPlayerSeasonAverage}
-          secondPlayerGameStats={secondPlayerGameStats}
-        />
-        <GetSecondPlayerStats
-          secondPlayerName={secondPlayerName}
-          setSecondPlayerName={setSecondPlayerName}
-          secondPlayerSeasonAverage={secondPlayerSeasonAverage}
-          setSecondPlayerSeasonAverage={setSecondPlayerSeasonAverage}
-          secondPlayerGameStats={secondPlayerGameStats}
-          setSecondPlayerGameStats={setSecondPlayerGameStats}
-          firstPlayerSeasonAverage={firstPlayerSeasonAverage}
-          firstPlayerGameStats={firstPlayerGameStats}
-        />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div
+        className={
+          openLinks === true
+            ? styles["compare-players-page-adjusted"]
+            : styles["compare-players-page"]
+        }
+      >
+        <div class={styles["compare-players-header"]}>
+          Player Comparison (Current Season)
+        </div>
+        <div className={styles["compare-players-boxes"]}>
+          {/* First Player Stats*/}
+          <ComparePlayerStats
+            firstPlayerProfile={firstPlayerProfile}
+            setFirstPlayerProfile={setFirstPlayerProfile}
+            firstPlayerSeasonAverage={firstPlayerSeasonAverage}
+            setFirstPlayerSeasonAverage={setFirstPlayerSeasonAverage}
+            firstPlayerGameStats={firstPlayerGameStats}
+            setFirstPlayerGameStats={setFirstPlayerGameStats}
+            secondPlayerSeasonAverage={secondPlayerSeasonAverage}
+            secondPlayerGameStats={secondPlayerGameStats}
+          />
 
-        {/* Second Player */}
-      </div>
-      <h3>Last 10 Games Averages </h3>
-      <hr />
-      {!firstPlayerGameStats && !secondPlayerGameStats && (
-        <div>
-          <span>No player data found.</span>
+          {/* Second Player Stats*/}
+          <ComparePlayerStats
+            firstPlayerProfile={secondPlayerProfile}
+            setFirstPlayerProfile={setSecondPlayerProfile}
+            firstPlayerSeasonAverage={secondPlayerSeasonAverage}
+            setFirstPlayerSeasonAverage={setSecondPlayerSeasonAverage}
+            firstPlayerGameStats={secondPlayerGameStats}
+            setFirstPlayerGameStats={setSecondPlayerGameStats}
+            secondPlayerSeasonAverage={firstPlayerSeasonAverage}
+            secondPlayerGameStats={firstPlayerGameStats}
+          />
         </div>
-      )}
-      {firstPlayerGameStats && (
-        <div>
-          {renderLastTenGameStats(firstPlayerGameStats, firstPlayerName)}
-        </div>
-      )}
-      {secondPlayerGameStats && (
-        <div>
-          {renderLastTenGameStats(secondPlayerGameStats, secondPlayerName)}
-        </div>
-      )}
 
-      {/* Comparison graph based on chosen first and second player */}
-      <div className="comparison-graph">
-        <h3>Graph comparison (Last 10 Games)</h3>
+        {/* Last 10 Games Averages */}
+        <h3>Last 10 Games Averages </h3>
         <hr />
-        <LineChart
-          firstPlayerName={firstPlayerName}
-          secondPlayerName={secondPlayerName}
-          firstPlayerGameStats={firstPlayerGameStats}
-          secondPlayerGameStats={secondPlayerGameStats}
-        />
+        {!firstPlayerGameStats && !secondPlayerGameStats && (
+          <div>
+            <span>No player data found.</span>
+          </div>
+        )}
+        {firstPlayerGameStats && (
+          <div>
+            {renderLastTenGameStats(firstPlayerGameStats, firstPlayerProfile)}
+          </div>
+        )}
+        {secondPlayerGameStats && (
+          <div>
+            {renderLastTenGameStats(secondPlayerGameStats, secondPlayerProfile)}
+          </div>
+        )}
+
+        {/* Comparison graph based on chosen first and second player */}
+        <div className={styles["comparison-graph"]}>
+          <h3>Graph comparison (Last 10 Games)</h3>
+          <hr />
+          <LineChart
+            firstPlayerName={`${firstPlayerProfile?.first_name} ${firstPlayerProfile?.last_name}`}
+            secondPlayerName={`${secondPlayerProfile?.first_name} ${secondPlayerProfile?.last_name}`}
+            firstPlayerGameStats={firstPlayerGameStats}
+            secondPlayerGameStats={secondPlayerGameStats}
+          />
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

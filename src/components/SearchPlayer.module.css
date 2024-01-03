@@ -2,33 +2,29 @@
     transform: translateY(0);
 }
 
-.player-stats-page.adjusted{
+.player-stats-page-adjusted{
     transform: translateY(50px);
 }
 
-
 /* Customization for form/input */
-.player-search-div {
+.player-search-container {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, 700%);
-    transition: transform 5s;
 }
 
-/* Transition for form/input */
-.player-search-div-enter {
-    transform: translateX(-50%);
-}
-
-.player-search-div-enter-active {
-    transform: translate(-50%, 200%);
-    transition: transform 500ms ease-in-out;
-}
-
-.player-search-div-enter-done {
-    transform: translate(-50%, 200%);
+/* Form will move up when submit button is clicked */
+.player-search-container-top {
+    opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 1s;
     position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 200%);
 }
 
 /* Customization for search results*/
@@ -54,27 +50,7 @@
     
 }
 
-
-
-/*Transition for search results*/
-.player-enter {
-    opacity: 0;
-}
-
-.player-enter-active {
-    opacity: 1;
-    transition: opacity 500ms ease-in;
-}
-
-.player-exit {
-    opacity: 1;
-  }
-
-.player-exit-active {
-    opacity: 0;
-    transition: opacity 500ms ease-in;
-}
-
+/* Search Results container */
 .scrollable-container {
     height: 350px;
     overflow:auto;
@@ -82,43 +58,42 @@
     width: 700px;
     border: 1px solid #272727;
     margin-bottom: 150px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
 }
 
+/* Each Player box in the search results container */
 .player-box {
     border: 1px solid #ccc;
     padding: 20px;
-    white-space: nowrap;
-    overflow: hidden;
     transition: background-color 0.3s ease;
+    max-height: 90px;
 }
 
-.col-6 {
-    margin: 0;
-    padding: 0;
-}
-  
+
 .player-box:hover {
     background-color: #f0f0f0;
     cursor: pointer;
 }
 
-
-.search-results-enter {
-    opacity: 0;
-}
-  
-.search-results-enter-active {
-    opacity: 1;
-    transition: opacity 500ms ease-in-out;
-}
-
-.search-results-exit {
-    opacity: 1;
+/* Fade in animation */
+.fade-in {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 1s;
 }
 
-.search-results-exit-active {
-    opacity: 0;
-    transition: opacity 500ms ease-in-out;
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 /* @media only screen and (max-width: 1200px) {

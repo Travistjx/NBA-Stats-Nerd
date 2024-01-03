@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./LiveGameStats.css";
+import styles from "./LiveGameStats.module.css";
 import moment from "moment-timezone";
 import axios from "axios";
 import loadingAnimation from "../assets/loading-animation.json";
@@ -10,16 +10,17 @@ const LiveGameStats = ({ openLinks }) => {
   const [liveGameData, setLiveGameData] = useState(null);
   const [isloading, setIsLoading] = useState(true);
 
+  // Takes place every 15 seconds, call API to retrieve games for that day, live or not
   useEffect(() => {
     const intervalId = setInterval(() => {
+      // Convert to US timezone
       const convertedDate = moment().tz("US/Pacific").format("YYYY-MM-DD");
 
       const fetchDate = async () => {
         try {
           const liveGameAPI = `https://www.balldontlie.io/api/v1/games?start_date=${convertedDate}&end_date=${convertedDate}`;
-          const response = await axios.get(liveGameAPI);
+          const response = await axios.get(liveGameAPI, { timeout: 10000 });
 
-          console.log(response.data);
           setLiveGameData(response.data);
           setIsLoading(false);
         } catch (error) {
@@ -27,18 +28,28 @@ const LiveGameStats = ({ openLinks }) => {
         }
       };
 
-      //fetchDate();
-    }, 10000);
+      fetchDate();
+    }, 15000);
 
+    //clear the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
 
-  return isloading ? (
-    <Lottie animationData={loadingAnimation} className="loading-animation" />
+  return /* Loading Animation */ isloading ? (
+    <Lottie
+      animationData={loadingAnimation}
+      className={styles["loading-animation"]}
+    />
   ) : (
+    // When loaded, display live data if it's present
     liveGameData && (
+      /* Fade in / Out when entering or leaving page */
       <motion.div
-        className={`live-game-stats-container${openLinks ? " adjusted" : ""}`}
+        className={
+          openLinks
+            ? styles["live-game-stats-container-adjusted"]
+            : styles["live-game-stats-container"]
+        }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -47,10 +58,11 @@ const LiveGameStats = ({ openLinks }) => {
           <h1>Games Today</h1>
         </div>
         <div>
-          <div className="scoreboard-container">
+          {/* Live scoreboards of games today */}
+          <div className={styles["scoreboard-container"]}>
             {liveGameData.data.map((gameStat, index) => (
               <div className="scoreboard card" key={index}>
-                <div className="game-status">
+                <div className={styles["game-status"]}>
                   {gameStat.period === 0
                     ? "Not Started"
                     : gameStat.period === 1
@@ -61,12 +73,12 @@ const LiveGameStats = ({ openLinks }) => {
                     ? "3rd Quarter"
                     : "4th Quarter / Finished"}
                 </div>
-                <div className="scoreboard-stats">
-                  <div className="home-team-stats">
-                    <span>{gameStat.home_team.full_name}</span>{" "}
+                <div className={styles["scoreboard-stats"]}>
+                  <div className={styles["home-team-stats"]}>
+                    <span>{gameStat.home_team.full_name}</span>
                     <span>{gameStat.home_team_score || 0}</span>
                   </div>
-                  <div className="visitor-team-stats">
+                  <div className={styles["visitor-team-stats"]}>
                     <span>{gameStat.visitor_team.full_name}</span>
                     <span>{gameStat.visitor_team_score || 0} </span>
                   </div>

@@ -2,10 +2,6 @@
     box-sizing: border-box;
 }
 
-body {
-    margin: 0;
-}
-
 .nav {
     background-color: #333;
     color: white;
@@ -14,9 +10,9 @@ body {
     align-items: stretch;
     padding: 0 1rem;
     gap: 2rem;
-    
 }
 
+/* NBA Stats Nerd (site title)*/
 .site-title {
     font-size: 1.25rem;
 }
@@ -28,17 +24,6 @@ body {
     display:flex;
     gap:1rem;
     
-}
-
-
-
-.games-dropdown-button {
-    background-color: #333;
-    border: none;
-}
-
-.games-dropdown-button:hover {
-    background-color: #444;
 }
 
 .nav a {
@@ -59,7 +44,7 @@ body {
     border-radius: 5px;
 }
 
-
+/* Cutstomize the drop down bar */
 .drop-down {
     display:flex;
     flex-direction: column;
@@ -69,6 +54,7 @@ body {
     padding: 5px;
     width: 130px;
     background-color: #333;
+    z-index: 1;
 }
 
 .drop-down a:hover {
@@ -81,10 +67,12 @@ body {
     margin-left: 5px;
 }
 
+/* Hide navbar icon (only appears when screen is smaller/zoomed in */
 a.navbar-icon {
     display: none;
 }
 
+/* Position the links */
 .nav-links {
     padding: 0;
     margin: 0;
@@ -94,7 +82,7 @@ a.navbar-icon {
 }
 
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 600px){
     .nav {
          display: block;
     }
@@ -111,7 +99,7 @@ a.navbar-icon {
         display: none;
     }
 
-    .nav-links.responsive{
+    .nav-links-responsive{
         display: block;
     }
 
@@ -120,14 +108,14 @@ a.navbar-icon {
         display:flex;
         flex-direction: column;
         position: absolute;
-        top: 7.8rem;
+        top: 10.35rem;
         left: 0rem;
         padding: 5px;
         padding-left: 30px;
         width: 100%;
         background-color: #333;
         z-index: 999;
- 
+
     }
 
     

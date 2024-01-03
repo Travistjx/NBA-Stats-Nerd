@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJs } from "chart.js/auto";
+import styles from "./LineChart.module.css";
 
 const LineChart = ({
   firstPlayerName,
@@ -99,71 +100,71 @@ const LineChart = ({
         <div>
           <div className="toggle-graph-options">
             <button
-              className={`graph-option-button ${
-                graphOption === "pts" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "pts" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("pts", "Points")}
             >
               Points
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "reb" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "reb" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("reb", "Rebounds")}
             >
               Rebounds
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "ast" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "ast" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("ast", "Assists")}
             >
               Assists
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "blk" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "blk" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("blk", "Blocks")}
             >
               Blocks
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "stl" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "stl" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("stl", "Steals")}
             >
               Steals
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "fg_pct" ? "btn-selected" : ""
-              }`}
+              className={` ${
+                graphOption === "fg_pct" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("fg_pct", "FG%")}
             >
               Field Goal %
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "fg3_pct" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "fg3_pct" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("fg3_pct", "3PT%")}
             >
               3-Pointer %
             </button>
             <button
-              className={`graph-option-button ${
-                graphOption === "ft_pct" ? "btn-selected" : ""
-              }`}
+              className={`${
+                graphOption === "ft_pct" ? styles["btn-selected"] : ""
+              } ${styles["graph-option-button"]}`}
               onClick={() => changeGraphOption("ft_pct", "FT%")}
             >
               Free Throw %
             </button>
           </div>
-          <Line data={playerChartData} className="line-graph" />
+          <Line data={playerChartData} className={styles["line-graph"]} />
         </div>
       ) : (
         <span>No player data found.</span>
