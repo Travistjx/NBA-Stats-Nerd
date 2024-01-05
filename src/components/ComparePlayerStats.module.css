@@ -99,9 +99,3 @@
 .player-image {
     width: 250px;  
 }
-
-@media screen and (max-width: 300px) {
-    * {
-        font-size: 10px;
-    }
-} 
