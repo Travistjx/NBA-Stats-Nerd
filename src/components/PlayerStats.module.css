@@ -34,13 +34,8 @@
 }
 
 
-.stats-summary {
-
-}
-
 .last-ten-games {
     margin-top: 30px;
-    
 }
 
 
@@ -69,14 +64,19 @@ td {
 .season-average thead tr th:nth-child(9) {
     border-right: 2px solid blue;
 }
-/* 
+
 @media screen and (max-width: 900px) {
     .player-stats-info{
         overflow: auto;
         max-width: 800px;
-        height: 300px;
-        margin-top: 100px;  
+        height: 500px;
+        margin-top: 50px;  
         margin-bottom: 150px;
+    }
+
+    .player-profile-photo {
+        height: auto;
+        width: 150px;
     }
     
 }
@@ -85,35 +85,56 @@ td {
     .player-stats-info{
         overflow: auto;
         max-width: 600px;
-        height: 200px;
+        height: 400px;
+    }
+
+    .player-profile {
+        display: flex;
+        margin-bottom: 40px;
+        position: relative;
+        width: 100%;
     }
     
+    .player-profile-photo {
+        height: auto;
+        width: 150px;
+    }
 }
 
 @media screen and (max-width: 600px) {
     .player-stats-info{
         overflow: auto;
         max-width: 400px;
-        height: 100px;
+        height: 500px;
     }
-    
+
+    .player-profile-photo {
+        height: auto;
+        width: 100px;
+    }
+
 }
 
 @media screen and (max-width: 400px) {
     .player-stats-info{
         overflow: auto;
         max-width: 300px;
-        height: 50px;
+        height: 450px;
     }
-    
 }
 
 @media screen and (max-width: 300px) {
     .player-stats-info{
         overflow: auto;
         max-width: 200px;
-        height: 40px;
+        height: 400px;
     }
     
+    .player-profile-photo {
+       visibility: hidden;
+    }
+
+    
+   
 }
- */
+

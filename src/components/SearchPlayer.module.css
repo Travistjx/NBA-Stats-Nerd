@@ -96,30 +96,16 @@
 	}
 }
 
-/* @media only screen and (max-width: 1200px) {
-    .player-search-div {
-        transform: translate(-50%, 500%);
+@media only screen and (max-width: 1100px) {
+    .player-search-container {
+        transform: translate(-50%, 400%);
     }
 }
 
-@media only screen and (max-width: 1000px) {
- 
-    .player-search-form {
-        transform: translateY(100%);
-    }
-
-    .search-results {
-        transform: translate(-50%, 40%);      
-    }
-    
-    .player-search-div {
-        transform: translate(-50%, 350%);
-    }
-}
 
 @media only screen and (max-width: 800px) {
-    .player-search-form {     
-        transform: translateY(100%);
+    .player-search-container {
+        transform: translate(-50%, 300%);
     }
 
     .scrollable-container {
@@ -128,17 +114,13 @@
         overflow-x: hidden;
         width: 500px;
     }
-
-    .player-search-div {
-        transform: translate(-50%, 250%);
-    }
 }
 
 
 
 @media only screen and (max-width: 600px) {
-    .player-search-form {     
-        transform: translateY(100%);
+    .player-search-container {
+        transform: translate(-50%, 250%);
     }
 
        
@@ -147,16 +129,11 @@
         overflow:auto;
         width: 400px;
     }
-
-    .player-search-div {
-        transform: translate(-50%, 50%);
-        width: 250px;
-    }
 }
 
-@media only screen and (max-width: 400px) {
-    .player-search-form {     
-        transform: translateY(100%);
+@media only screen and (max-width: 500px) {
+    .player-search-container {
+        transform: translate(-50%, 200%);
     }
 
     .scrollable-container {
@@ -164,15 +141,11 @@
         overflow:auto;
         width: 300px;
     }
-
-    .player-search-div {
-        transform: translate(-50%, 0%);
-    }
 }
 
-@media only screen and (max-width: 300px) {
-    .player-search-form {     
-        transform: translateY(100%);
+@media only screen and (max-width: 400px) {
+    .player-search-container {
+        transform: translate(-50%, 100%);
     }
 
     .scrollable-container {
@@ -180,9 +153,16 @@
         overflow:auto;
         width: 200px;
     }
+}
 
-    .player-search-div {
-        transform: translate(-50%, -30%);
+@media only screen and (max-width: 300px) {
+    .player-search-container {
+        transform: translate(-50%, 70%);
+    }
+
+    .scrollable-container {
+        height: 250px;
+        overflow:auto;
         width: 200px;
     }
-} */
+}

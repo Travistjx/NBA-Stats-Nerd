@@ -113,15 +113,49 @@ h1 {
 	}
 }
 
-@media screen and (max-width: 300px) {
-   
+@media only screen and (max-width: 1100px) {
+    .games-search-container {
+        transform: translate(-50%, 400%);
+    }
+}
+
+
+@media only screen and (max-width: 800px) {
+    .games-search-container {
+        transform: translate(-50%, 300%);
+    }
+}
+
+
+
+@media only screen and (max-width: 600px) {
+    .games-search-container {
+        transform: translate(-50%, 250%);
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .games-search-container {
+        transform: translate(-50%, 200%);
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .games-search-container{
+        transform: translate(-50%, 100%);
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .games-search-container {
+        transform: translate(-50%, 70%);
+    }
 
     .scoreboard-stats {
-        font-size: 14px;
-   }
+        font-size: 10px;
+    }
 
    h1 {
         font-size: 20px;
     }
-
 }

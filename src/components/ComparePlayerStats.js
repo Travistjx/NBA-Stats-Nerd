@@ -5,7 +5,7 @@ import { faSearch } from "@fortawesome/fontawesome-free-solid";
 import axios from "axios";
 import loadingAnimation from "../assets/loading-animation.json";
 import Lottie from "lottie-react";
-import styles from "./GetComparePlayerStats.module.css";
+import styles from "./ComparePlayerStats.module.css";
 
 const ComparePlayerStats = ({
   firstPlayerProfile,
@@ -35,7 +35,10 @@ const ComparePlayerStats = ({
     const fetchPlayerProfile = async () => {
       const playerProfileAPI = `https://www.balldontlie.io/api/v1/players?search=${formattedPlayerName}`;
       const response = await axios.get(playerProfileAPI);
-      setAllFirstPlayersFound(response.data.data);
+      if (response.data.data) {
+        setAllFirstPlayersFound(response.data.data);
+      }
+
       setFirstFormIsPending(false);
     };
 
@@ -190,6 +193,7 @@ const ComparePlayerStats = ({
       <form
         onSubmit={handleSubmitFirstPlayer}
         className={styles["player-form"]}
+        data-testid="compare-players-form"
       >
         <div className={styles["input-wrapper"]}>
           <FontAwesomeIcon icon={faSearch} />
@@ -201,6 +205,7 @@ const ComparePlayerStats = ({
             required
           />
         </div>
+        <input type="submit" hidden />
       </form>
 
       {/* First Player (Season Average) */}
@@ -215,9 +220,10 @@ const ComparePlayerStats = ({
       <div className={styles["player-search-results"]}>
         {allFirstPlayersFound &&
           !firstPlayerIsChosen &&
-          allFirstPlayersFound?.map((player) => (
+          allFirstPlayersFound?.map((player, index) => (
             <div
               className={styles["search-result-box"]}
+              data-testid={`player-season-average-${index}`}
               key={player.id}
               onClick={() => {
                 getPlayerStats(player);
