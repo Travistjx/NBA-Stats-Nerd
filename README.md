@@ -1,7 +1,7 @@
-**NBA STATS NERD**
+# NBA STATS NERD
 
-#PROJECT DESCRIPTION
-This is a web application created in React.js to fetch API and display NBA statistics. Here, user can utilize the website to compare active players' season averages and stats in their last 10 games. The user can also search up any players, active or not and get their stats. Games can also be searched, categories by live games and past games.
+# ABOUT
+NBA Stats Nerd is a web application created in React.js to efficiently and conveniently fetch and display NBA statistics. Here, users can utilize the website to compare active players' season averages and stats in their last 10 games. User can also search any players, active or not and get their stats in detail. Games are also searchable, categorized by live games and past games.
 
 # PROJECT STATUS
 This project is currently in development.
