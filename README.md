@@ -1,5 +1,10 @@
+**NBA STATS NERD**
+
+#PROJECT DESCRIPTION
+This is a web application created in React.js to fetch API and display NBA statistics. Here, user can utilize the website to compare active players' season averages and stats in their last 10 games. The user can also search up any players, active or not and get their stats. Games can also be searched, categories by live games and past games.
+
 # PROJECT STATUS
-Ongoing
+This project is currently in development.
 
 # Getting Started with Create React App
 
