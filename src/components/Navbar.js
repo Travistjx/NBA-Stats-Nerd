@@ -41,7 +41,7 @@ const Navbar = ({ openLinks, setOpenLinks }) => {
         >
           <ul>
             <li>
-              <Link to="/compareplayers">Compare Players</Link>
+              <Link to="/compareplayers">Compare Active Players</Link>
             </li>
             <li>
               <Link to="/searchplayer">Search Player</Link>

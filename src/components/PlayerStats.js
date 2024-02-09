@@ -38,7 +38,7 @@ const PlayerStats = ({ playerId }) => {
       try {
         const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${playerId}`;
         const playerProfileAPI = `https://www.balldontlie.io/api/v1/players/${playerId}`;
-        const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}`;
+        const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]=${playerId}&per_page=100`;
 
         //retrieve data from api asynchronously
         const [seasonAverageData, playerProfileData, gameStatsData] =
@@ -52,59 +52,10 @@ const PlayerStats = ({ playerId }) => {
         setSeasonAverage(seasonAverageData.data);
         setPlayerProfile(playerProfileData.data);
 
-        //to store all the game stats data
-        let totalPageData = null;
-
-        // Find total pages for data
-        let totalPages = gameStatsData.data.meta.total_pages;
-
-        //If pages > 1, fetch data from the last page for specific player
-        if (totalPages > 1) {
-          const lastPageApiUrl = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&page=${totalPages}`;
-          const lastPageData = await axios.get(lastPageApiUrl, {
-            timeout: 10000,
-          });
-
-          let filteredStats = lastPageData?.data.data.filter(
-            (gameStat) =>
-              gameStat.min !== "00" &&
-              gameStat.game.season === 2023 &&
-              gameStat.game.postseason === false
-          );
-
-          let gameSize = filteredStats.length;
-
-          setGameStats(filteredStats);
-
-          totalPageData = filteredStats;
-          let count = 0;
-
-          // Check if more pages are needed (since data on last page might be insufficient)
-          while (gameSize < 10 && totalPages > 1 && count < 6) {
-            totalPages -= 1;
-            const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&page=${totalPages}`;
-            const previousPageData = await axios.get(previousPageAPI);
-
-            //get number of games that player actually played in this season
-            filteredStats = previousPageData?.data.data.filter(
-              (gameStat) =>
-                gameStat.min !== "00" &&
-                gameStat.game.season === 2023 &&
-                gameStat.game.postseason === false
-            );
-
-            //concantenate all the results found
-            totalPageData = filteredStats.concat(totalPageData);
-
-            gameSize += filteredStats.length;
-            count += 1;
-          }
-        }
-
         setGameStats({
           data: {
             data: [
-              ...totalPageData?.filter(
+              ...gameStatsData.data.data.filter(
                 (gameStat) =>
                   gameStat.min !== "00" &&
                   gameStat.game.season === 2023 &&
@@ -113,6 +64,7 @@ const PlayerStats = ({ playerId }) => {
             ],
           },
         });
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching player data:", error);
