@@ -94,70 +94,17 @@ const ComparePlayerStats = ({
 
     const fetchPlayerStats = async () => {
       const seasonAverageAPI = `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${chosenPlayer.id}`;
-      const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}`;
+      const gameStatsAPI = `https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]=${chosenPlayer.id}&per_page=100`;
 
       const [seasonAverageData, gameStatsData] = await Promise.all([
         axios.get(seasonAverageAPI, { timeout: 10000 }),
         axios.get(gameStatsAPI, { timeout: 10000 }),
       ]);
 
-      //to store all the data
-      let totalPageData = null;
-
-      if (seasonAverageData?.data.data[0]?.season) {
-        let totalPages = gameStatsData.data.meta.total_pages;
-
-        if (totalPages > 1) {
-          const lastPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-          const lastPageData = await axios.get(lastPageAPI, { timeout: 10000 });
-
-          let filteredStats = lastPageData?.data.data.filter(
-            (gameStat) =>
-              gameStat.min !== "00" &&
-              gameStat.game.season === 2023 &&
-              gameStat.game.postseason === false
-          );
-
-          let gameSize = filteredStats.length;
-
-          setFirstPlayerGameStats(filteredStats);
-
-          totalPageData = filteredStats;
-          let count = 0;
-
-          // Check if more pages are needed (since data on last page might be insufficient)
-          while (gameSize < 10 && totalPages > 1 && count < 6) {
-            totalPages -= 1;
-            const previousPageAPI = `https://www.balldontlie.io/api/v1/stats?player_ids[]=${chosenPlayer.id}&page=${totalPages}`;
-            const previousPageData = await axios.get(previousPageAPI, {
-              timeout: 10000,
-            });
-
-            //get number of games that player actually played in this season
-            filteredStats = previousPageData?.data.data.filter(
-              (gameStat) =>
-                gameStat.min !== "00" &&
-                gameStat.game.season === 2023 &&
-                gameStat.game.postseason === false
-            );
-
-            //concantenate all the results found
-            totalPageData = filteredStats.concat(totalPageData);
-
-            gameSize += filteredStats.length;
-            count += 1;
-          }
-        }
-      } else {
-        setFirstPlayerError("notActive");
-        setFirstPlayerLoading(false);
-        return;
-      }
-
       setFirstPlayerGameStats({
         data: {
           data: [
-            ...totalPageData?.filter(
+            ...gameStatsData.data.data.filter(
               (gameStat) =>
                 gameStat.min !== "00" &&
                 gameStat.game.season === 2023 &&
@@ -166,7 +113,9 @@ const ComparePlayerStats = ({
           ],
         },
       });
+
       setFirstPlayerSeasonAverage(seasonAverageData.data);
+
       setFirstPlayerPhoto(
         getPlayerPhoto(`${chosenPlayer.first_name} ${chosenPlayer.last_name}`)
       );
