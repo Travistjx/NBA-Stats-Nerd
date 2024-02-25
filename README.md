@@ -11,5 +11,5 @@ NBA Stats Nerd is a web application created in React.js to efficiently and conve
 - ```cd NBA-Stats-Nerd```<br/>
 - Run ```npm start```
 
-  # DEMO SITE
-  Link: https://transcendent-alpaca-d4455c.netlify.app/
+# DEMO SITE
+Link: https://transcendent-alpaca-d4455c.netlify.app/
