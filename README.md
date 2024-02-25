@@ -1,6 +1,6 @@
 # NBA STATS NERD
 <li><a href = "#about">About</a></li>
-<li><a href = "#demosite">Demo Site</a></li>
+<li><a href = "#demo-site">Demo Site</a></li>
 <li><a href = "#installation--setup">Installation</a></li>
 
 # ABOUT
